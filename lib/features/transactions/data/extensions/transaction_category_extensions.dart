@@ -1,4 +1,5 @@
 import 'package:munshi/core/database/app_database.dart';
+import 'package:munshi/features/transactions/data/codecs/category_icon_spec_codec.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
 
 extension TransactionCategoryRowExtensions on TransactionCategoryRow {
@@ -6,8 +7,8 @@ extension TransactionCategoryRowExtensions on TransactionCategoryRow {
     return TransactionCategory(
       id: id,
       name: name,
-      icon: icon,
-      color: color,
+      icon: CategoryIconSpecCodec.decode(icon),
+      colorArgb: color,
       type: type,
       isDefault: isDefault,
       createdAt: createdAt,
@@ -20,8 +21,8 @@ extension TransactionCategoryExtension on TransactionCategory {
     return TransactionCategoryRow(
       id: id,
       name: name,
-      icon: icon,
-      color: color,
+      icon: CategoryIconSpecCodec.encode(icon),
+      color: colorArgb,
       type: type,
       isDefault: isDefault,
       createdAt: createdAt,

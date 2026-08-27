@@ -1,18 +1,21 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/category_icon_spec.dart';
 
 void main() {
-  const tIcon = IconData(0xe25a, fontFamily: 'MaterialIcons');
-  const tColor = Color(0xFF4CAF50);
+  const tIcon = CategoryIconSpec(
+    codePoint: 0xe25a,
+    fontFamily: 'MaterialIcons',
+  );
+  const tColorArgb = 0xFF4CAF50;
   final baseDate = DateTime(2026);
 
   final tCategory = TransactionCategory(
     id: 1,
     name: 'Food',
     icon: tIcon,
-    color: tColor,
+    colorArgb: tColorArgb,
     type: TransactionType.expense,
     isDefault: true,
     createdAt: baseDate,
@@ -24,7 +27,7 @@ void main() {
         id: 1,
         name: 'Food',
         icon: tIcon,
-        color: tColor,
+        colorArgb: tColorArgb,
         type: TransactionType.expense,
         isDefault: true,
         createdAt: baseDate,
@@ -57,7 +60,7 @@ void main() {
     test('instances differ when color differs', () {
       expect(
         tCategory,
-        isNot(equals(tCategory.copyWith(color: const Color(0xFFFF0000)))),
+        isNot(equals(tCategory.copyWith(colorArgb: 0xFFFF0000))),
       );
     });
 
@@ -73,7 +76,7 @@ void main() {
         id: 1,
         name: 'Food',
         icon: tIcon,
-        color: tColor,
+        colorArgb: tColorArgb,
         type: TransactionType.expense,
         isDefault: true,
         createdAt: baseDate,
@@ -95,7 +98,7 @@ void main() {
       // unchanged fields stay the same
       expect(updated.id, tCategory.id);
       expect(updated.icon, tCategory.icon);
-      expect(updated.color, tCategory.color);
+      expect(updated.colorArgb, tCategory.colorArgb);
       expect(updated.type, tCategory.type);
       expect(updated.createdAt, tCategory.createdAt);
     });

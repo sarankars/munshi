@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
 class CategorySelectionBottomSheet extends StatefulWidget {
   const CategorySelectionBottomSheet({
@@ -119,15 +120,19 @@ class _CategorySelectionBottomSheetState
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: category.color.withValues(alpha: 0.12),
+                                color: category.displayColor.withValues(
+                                  alpha: 0.12,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: category.color.withValues(alpha: 0.3),
+                                  color: category.displayColor.withValues(
+                                    alpha: 0.3,
+                                  ),
                                 ),
                               ),
                               child: Icon(
-                                category.icon,
-                                color: category.color,
+                                category.displayIcon,
+                                color: category.displayColor,
                                 size: 22,
                               ),
                             ),

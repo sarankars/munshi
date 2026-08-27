@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
 class CategoryListTile extends StatelessWidget {
   const CategoryListTile({
@@ -18,8 +19,8 @@ class CategoryListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final categoryIcon = category.icon;
-    final categoryColor = category.color;
+    final categoryIcon = category.displayIcon;
+    final categoryColor = category.displayColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),

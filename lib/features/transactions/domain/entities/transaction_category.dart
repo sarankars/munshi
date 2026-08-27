@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
+import 'package:munshi/features/transactions/domain/value_objects/category_icon_spec.dart';
 
 /// Represents a transaction category.
 ///
@@ -11,7 +11,7 @@ class TransactionCategory extends Equatable {
     required this.id,
     required this.name,
     required this.icon,
-    required this.color,
+    required this.colorArgb,
     required this.type,
     required this.isDefault,
     required this.createdAt,
@@ -23,11 +23,12 @@ class TransactionCategory extends Equatable {
   /// The display name of this category (e.g. "Food", "Transport").
   final String name;
 
-  /// The icon used to visually represent this category.
-  final IconData icon;
+  /// UI-independent metadata for the icon representing this category.
+  final CategoryIconSpec icon;
 
-  /// The colour used to visually distinguish this category.
-  final Color color;
+  /// The colour used to visually distinguish this category, as a 32-bit ARGB
+  /// value.
+  final int colorArgb;
 
   /// Whether this category applies to [TransactionType.income] or
   /// [TransactionType.expense] transactions.
@@ -46,7 +47,7 @@ class TransactionCategory extends Equatable {
     id,
     name,
     icon,
-    color,
+    colorArgb,
     type,
     isDefault,
     createdAt,
@@ -58,8 +59,8 @@ class TransactionCategory extends Equatable {
   TransactionCategory copyWith({
     int? id,
     String? name,
-    IconData? icon,
-    Color? color,
+    CategoryIconSpec? icon,
+    int? colorArgb,
     TransactionType? type,
     bool? isDefault,
     DateTime? createdAt,
@@ -68,7 +69,7 @@ class TransactionCategory extends Equatable {
       id: id ?? this.id,
       name: name ?? this.name,
       icon: icon ?? this.icon,
-      color: color ?? this.color,
+      colorArgb: colorArgb ?? this.colorArgb,
       type: type ?? this.type,
       isDefault: isDefault ?? this.isDefault,
       createdAt: createdAt ?? this.createdAt,

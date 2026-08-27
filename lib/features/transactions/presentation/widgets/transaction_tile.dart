@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/core/extensions/currency_extensions.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
 class TransactionTile extends StatefulWidget {
   const TransactionTile({
@@ -83,13 +84,15 @@ class _TransactionTileState extends State<TransactionTile>
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color:
-                  widget.transaction.category?.color.withValues(alpha: 0.12) ??
+                  widget.transaction.category?.displayColor.withValues(
+                    alpha: 0.12,
+                  ) ??
                   Colors.grey.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              widget.transaction.category?.icon ?? Icons.category,
-              color: widget.transaction.category?.color ?? Colors.grey,
+              widget.transaction.category?.displayIcon ?? Icons.category,
+              color: widget.transaction.category?.displayColor ?? Colors.grey,
               size: 22,
             ),
           ),

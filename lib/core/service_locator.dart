@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:munshi/core/database/app_database.dart';
 import 'package:munshi/features/dashboard/services/dashboard_data_service.dart';
+import 'package:munshi/features/transactions/data/datasources/category_local_datasource.dart';
 import 'package:munshi/features/transactions/data/datasources/transaction_local_datasource.dart';
 import 'package:munshi/features/transactions/data/repositories/transaction_repository_impl.dart';
 import 'package:munshi/features/transactions/domain/repositories/transaction_repository.dart';
@@ -25,6 +26,7 @@ final GetIt locator = GetIt.instance;
 /// - Registers [CurrencyProvider] as a lazy singleton, initialized with the shared preferences.
 /// - Registers [PeriodProvider] as a lazy singleton, initialized with the shared preferences.
 /// - Registers [AppDatabase] as a lazy singleton for database access.
+/// - Registers [CategoryLocalDataSource] as a lazy singleton.
 /// - Registers [TransactionsDao] as a lazy singleton, initialized with the [AppDatabase] instance.
 /// - Registers [DashboardDataService] as a lazy singleton, initialized with the [TransactionsDao] instance.
 /// - Registers [TransactionRepository] (backed by [TransactionRepositoryImpl]) as a lazy singleton.
@@ -42,6 +44,9 @@ Future<void> setupLocator() async {
     )
     ..registerLazySingleton<PeriodProvider>(() => PeriodProvider(prefs))
     ..registerLazySingleton<AppDatabase>(AppDatabase.new)
+    ..registerLazySingleton<CategoryLocalDataSource>(
+      () => CategoryLocalDataSource(locator<AppDatabase>()),
+    )
     ..registerLazySingleton<TransactionLocalDataSource>(
       () => TransactionLocalDataSource(locator<AppDatabase>()),
     )

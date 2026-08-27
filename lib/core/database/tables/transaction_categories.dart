@@ -1,6 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:munshi/core/database/converters/color_converter.dart';
-import 'package:munshi/core/database/converters/icon_data_converter.dart';
 import 'package:munshi/core/database/converters/transaction_type_converter.dart';
 
 /// Database table for storing transaction categories.
@@ -15,11 +13,11 @@ class TransactionCategories extends Table {
   /// Name of the category.
   TextColumn get name => text()();
 
-  /// Icon data associated with the category.
-  TextColumn get icon => text().map(const IconDataConverter())();
+  /// Serialized, UI-independent icon metadata associated with the category.
+  TextColumn get icon => text()();
 
-  /// Color value for the category.
-  IntColumn get color => integer().map(const ColorConverter())();
+  /// The category color encoded as a 32-bit ARGB value.
+  IntColumn get color => integer()();
 
   /// Transaction type (income or expense).
   TextColumn get type => text().map(const TransactionTypeConverter())();

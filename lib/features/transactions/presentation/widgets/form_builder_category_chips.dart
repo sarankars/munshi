@@ -3,6 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 import 'package:provider/provider.dart';
 
 class FormBuilderCategoryChips extends StatelessWidget {
@@ -37,7 +38,7 @@ class FormBuilderCategoryChips extends StatelessWidget {
                   .map(
                     (category) => FormBuilderChipOption<TransactionCategory>(
                       value: category,
-                      avatar: Icon(category.icon),
+                      avatar: Icon(category.displayIcon),
                       child: Text(category.name),
                     ),
                   )

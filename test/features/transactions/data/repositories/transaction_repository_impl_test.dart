@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:munshi/core/database/app_database.dart';
@@ -7,6 +6,7 @@ import 'package:munshi/features/transactions/data/datasources/transaction_local_
 import 'package:munshi/features/transactions/data/repositories/transaction_repository_impl.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/category_icon_spec.dart';
 import 'package:munshi/features/transactions/domain/value_objects/transaction_filter.dart';
 
 class MockTransactionLocalDataSource extends Mock
@@ -30,8 +30,11 @@ void main() {
   final tCategory = TransactionCategory(
     id: 3,
     name: 'Food',
-    icon: const IconData(0xe25a, fontFamily: 'MaterialIcons'),
-    color: const Color(0xFF4CAF50),
+    icon: const CategoryIconSpec(
+      codePoint: 0xe25a,
+      fontFamily: 'MaterialIcons',
+    ),
+    colorArgb: 0xFF4CAF50,
     type: TransactionType.expense,
     isDefault: true,
     createdAt: DateTime(2026),

@@ -31,24 +31,24 @@ class $TransactionCategoriesTable extends TransactionCategories
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
   @override
-  late final GeneratedColumnWithTypeConverter<IconData, String> icon =
-      GeneratedColumn<String>(
-        'icon',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: true,
-      ).withConverter<IconData>($TransactionCategoriesTable.$convertericon);
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+    'icon',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
   @override
-  late final GeneratedColumnWithTypeConverter<Color, int> color =
-      GeneratedColumn<int>(
-        'color',
-        aliasedName,
-        false,
-        type: DriftSqlType.int,
-        requiredDuringInsert: true,
-      ).withConverter<Color>($TransactionCategoriesTable.$convertercolor);
+  late final GeneratedColumn<int> color = GeneratedColumn<int>(
+    'color',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<TransactionType, String> type =
       GeneratedColumn<String>(
@@ -120,6 +120,22 @@ class $TransactionCategoriesTable extends TransactionCategories
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (data.containsKey('icon')) {
+      context.handle(
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_iconMeta);
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+        _colorMeta,
+        color.isAcceptableOrUnknown(data['color']!, _colorMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_colorMeta);
+    }
     if (data.containsKey('is_default')) {
       context.handle(
         _isDefaultMeta,
@@ -149,18 +165,14 @@ class $TransactionCategoriesTable extends TransactionCategories
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
-      icon: $TransactionCategoriesTable.$convertericon.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}icon'],
-        )!,
-      ),
-      color: $TransactionCategoriesTable.$convertercolor.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.int,
-          data['${effectivePrefix}color'],
-        )!,
-      ),
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon'],
+      )!,
+      color: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}color'],
+      )!,
       type: $TransactionCategoriesTable.$convertertype.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
@@ -183,9 +195,6 @@ class $TransactionCategoriesTable extends TransactionCategories
     return $TransactionCategoriesTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<IconData, String> $convertericon =
-      const IconDataConverter();
-  static TypeConverter<Color, int> $convertercolor = const ColorConverter();
   static TypeConverter<TransactionType, String> $convertertype =
       const TransactionTypeConverter();
 }
@@ -198,11 +207,11 @@ class TransactionCategoryRow extends DataClass
   /// Name of the category.
   final String name;
 
-  /// Icon data associated with the category.
-  final IconData icon;
+  /// Serialized, UI-independent icon metadata associated with the category.
+  final String icon;
 
-  /// Color value for the category.
-  final Color color;
+  /// The category color encoded as a 32-bit ARGB value.
+  final int color;
 
   /// Transaction type (income or expense).
   final TransactionType type;
@@ -226,16 +235,8 @@ class TransactionCategoryRow extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    {
-      map['icon'] = Variable<String>(
-        $TransactionCategoriesTable.$convertericon.toSql(icon),
-      );
-    }
-    {
-      map['color'] = Variable<int>(
-        $TransactionCategoriesTable.$convertercolor.toSql(color),
-      );
-    }
+    map['icon'] = Variable<String>(icon);
+    map['color'] = Variable<int>(color);
     {
       map['type'] = Variable<String>(
         $TransactionCategoriesTable.$convertertype.toSql(type),
@@ -266,8 +267,8 @@ class TransactionCategoryRow extends DataClass
     return TransactionCategoryRow(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      icon: serializer.fromJson<IconData>(json['icon']),
-      color: serializer.fromJson<Color>(json['color']),
+      icon: serializer.fromJson<String>(json['icon']),
+      color: serializer.fromJson<int>(json['color']),
       type: serializer.fromJson<TransactionType>(json['type']),
       isDefault: serializer.fromJson<bool>(json['isDefault']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -279,8 +280,8 @@ class TransactionCategoryRow extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'icon': serializer.toJson<IconData>(icon),
-      'color': serializer.toJson<Color>(color),
+      'icon': serializer.toJson<String>(icon),
+      'color': serializer.toJson<int>(color),
       'type': serializer.toJson<TransactionType>(type),
       'isDefault': serializer.toJson<bool>(isDefault),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -290,8 +291,8 @@ class TransactionCategoryRow extends DataClass
   TransactionCategoryRow copyWith({
     int? id,
     String? name,
-    IconData? icon,
-    Color? color,
+    String? icon,
+    int? color,
     TransactionType? type,
     bool? isDefault,
     DateTime? createdAt,
@@ -352,8 +353,8 @@ class TransactionCategoriesCompanion
     extends UpdateCompanion<TransactionCategoryRow> {
   final Value<int> id;
   final Value<String> name;
-  final Value<IconData> icon;
-  final Value<Color> color;
+  final Value<String> icon;
+  final Value<int> color;
   final Value<TransactionType> type;
   final Value<bool> isDefault;
   final Value<DateTime> createdAt;
@@ -369,8 +370,8 @@ class TransactionCategoriesCompanion
   TransactionCategoriesCompanion.insert({
     this.id = const Value.absent(),
     required String name,
-    required IconData icon,
-    required Color color,
+    required String icon,
+    required int color,
     required TransactionType type,
     this.isDefault = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -401,8 +402,8 @@ class TransactionCategoriesCompanion
   TransactionCategoriesCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
-    Value<IconData>? icon,
-    Value<Color>? color,
+    Value<String>? icon,
+    Value<int>? color,
     Value<TransactionType>? type,
     Value<bool>? isDefault,
     Value<DateTime>? createdAt,
@@ -428,14 +429,10 @@ class TransactionCategoriesCompanion
       map['name'] = Variable<String>(name.value);
     }
     if (icon.present) {
-      map['icon'] = Variable<String>(
-        $TransactionCategoriesTable.$convertericon.toSql(icon.value),
-      );
+      map['icon'] = Variable<String>(icon.value);
     }
     if (color.present) {
-      map['color'] = Variable<int>(
-        $TransactionCategoriesTable.$convertercolor.toSql(color.value),
-      );
+      map['color'] = Variable<int>(color.value);
     }
     if (type.present) {
       map['type'] = Variable<String>(
@@ -910,8 +907,8 @@ typedef $$TransactionCategoriesTableCreateCompanionBuilder =
     TransactionCategoriesCompanion Function({
       Value<int> id,
       required String name,
-      required IconData icon,
-      required Color color,
+      required String icon,
+      required int color,
       required TransactionType type,
       Value<bool> isDefault,
       Value<DateTime> createdAt,
@@ -920,8 +917,8 @@ typedef $$TransactionCategoriesTableUpdateCompanionBuilder =
     TransactionCategoriesCompanion Function({
       Value<int> id,
       Value<String> name,
-      Value<IconData> icon,
-      Value<Color> color,
+      Value<String> icon,
+      Value<int> color,
       Value<TransactionType> type,
       Value<bool> isDefault,
       Value<DateTime> createdAt,
@@ -981,17 +978,15 @@ class $$TransactionCategoriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<IconData, IconData, String> get icon =>
-      $composableBuilder(
-        column: $table.icon,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnFilters<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnWithTypeConverterFilters<Color, Color, int> get color =>
-      $composableBuilder(
-        column: $table.color,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnFilters<int> get color => $composableBuilder(
+    column: $table.color,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<TransactionType, TransactionType, String>
   get type => $composableBuilder(
@@ -1095,10 +1090,10 @@ class $$TransactionCategoriesTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<IconData, String> get icon =>
+  GeneratedColumn<String> get icon =>
       $composableBuilder(column: $table.icon, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<Color, int> get color =>
+  GeneratedColumn<int> get color =>
       $composableBuilder(column: $table.color, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<TransactionType, String> get type =>
@@ -1177,8 +1172,8 @@ class $$TransactionCategoriesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<IconData> icon = const Value.absent(),
-                Value<Color> color = const Value.absent(),
+                Value<String> icon = const Value.absent(),
+                Value<int> color = const Value.absent(),
                 Value<TransactionType> type = const Value.absent(),
                 Value<bool> isDefault = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -1195,8 +1190,8 @@ class $$TransactionCategoriesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
-                required IconData icon,
-                required Color color,
+                required String icon,
+                required int color,
                 required TransactionType type,
                 Value<bool> isDefault = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),

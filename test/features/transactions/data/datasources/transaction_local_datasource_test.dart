@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' hide isNull;
 import 'package:drift/native.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:munshi/core/database/app_database.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
@@ -41,8 +40,8 @@ void main() {
         .insert(
           TransactionCategoriesCompanion.insert(
             name: name,
-            icon: const IconData(0xe25a, fontFamily: 'MaterialIcons'),
-            color: const Color(0xFF4CAF50),
+            icon: '57946,MaterialIcons,',
+            color: 0xFF4CAF50,
             type: type,
           ),
         );

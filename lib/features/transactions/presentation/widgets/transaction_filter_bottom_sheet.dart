@@ -6,6 +6,7 @@ import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
 import 'package:munshi/features/transactions/domain/value_objects/transaction_filter.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 import 'package:munshi/providers/currency_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -515,11 +516,11 @@ class _TransactionFilterBottomSheetState
                     label: Text(category.name),
                     selected: isSelected,
                     avatar: Icon(
-                      category.icon,
+                      category.displayIcon,
                       size: 16,
                       color: isSelected
                           ? colorScheme.onPrimary
-                          : category.color,
+                          : category.displayColor,
                     ),
                     onSelected: (selected) {
                       setState(() {
@@ -564,11 +565,11 @@ class _TransactionFilterBottomSheetState
                     label: Text(category.name),
                     selected: isSelected,
                     avatar: Icon(
-                      category.icon,
+                      category.displayIcon,
                       size: 16,
                       color: isSelected
                           ? colorScheme.onPrimary
-                          : category.color,
+                          : category.displayColor,
                     ),
                     onSelected: (selected) {
                       setState(() {

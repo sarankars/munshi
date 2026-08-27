@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:munshi/core/extensions/currency_extensions.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
 class CategoryTile extends StatefulWidget {
   const CategoryTile({
@@ -126,17 +127,18 @@ class _CategoryTileState extends State<CategoryTile>
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: (widget.category?.color ?? Colors.grey)
+                          color: (widget.category?.displayColor ?? Colors.grey)
                               .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: (widget.category?.color ?? Colors.grey)
-                                .withValues(alpha: 0.3),
+                            color:
+                                (widget.category?.displayColor ?? Colors.grey)
+                                    .withValues(alpha: 0.3),
                           ),
                         ),
                         child: Icon(
-                          widget.category?.icon ?? Icons.help_outline,
-                          color: widget.category?.color ?? Colors.grey,
+                          widget.category?.displayIcon ?? Icons.help_outline,
+                          color: widget.category?.displayColor ?? Colors.grey,
                           size: 24,
                         ),
                       ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:munshi/core/database/app_database.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/categories/widgets/color_picker_dialog.dart';
 import 'package:munshi/features/categories/widgets/icon_picker_dialog.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/transaction_category_input.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 import 'package:provider/provider.dart';
 
 class AddEditCategoryDialog extends StatefulWidget {
@@ -31,8 +32,8 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
     super.initState();
     if (widget.category != null) {
       _nameController.text = widget.category!.name;
-      _selectedIcon = widget.category!.icon;
-      _selectedColor = widget.category!.color;
+      _selectedIcon = widget.category!.displayIcon;
+      _selectedColor = widget.category!.displayColor;
     } else {
       _selectedIcon = Iconsax.category_outline;
       _selectedColor = Colors.blue;
@@ -100,16 +101,16 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
         // Update existing category
         final updatedCategory = widget.category!.copyWith(
           name: name,
-          icon: _selectedIcon,
-          color: _selectedColor,
+          icon: _selectedIcon.toCategoryIconSpec(),
+          colorArgb: _selectedColor.toARGB32(),
         );
         await provider.updateCategory(updatedCategory);
       } else {
         // Add new category
-        final newCategory = TransactionCategoriesCompanion.insert(
+        final newCategory = TransactionCategoryInput(
           name: name,
-          icon: _selectedIcon,
-          color: _selectedColor,
+          icon: _selectedIcon.toCategoryIconSpec(),
+          colorArgb: _selectedColor.toARGB32(),
           type: widget.type,
         );
         await provider.addCategory(newCategory);

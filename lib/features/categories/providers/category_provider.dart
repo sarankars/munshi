@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:munshi/core/database/app_database.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/core/service_locator.dart';
 import 'package:munshi/features/transactions/data/datasources/category_local_datasource.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/transaction_category_input.dart';
 
 class CategoryProvider extends ChangeNotifier {
   CategoryProvider() {
     loadCategories();
   }
   final CategoryLocalDataSource _categoriesDao =
-      locator<AppDatabase>().categoryLocalDataSource;
+      locator<CategoryLocalDataSource>();
 
   List<TransactionCategory> _expenseCategories = [];
   List<TransactionCategory> _incomeCategories = [];
@@ -35,7 +35,7 @@ class CategoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addCategory(TransactionCategoriesCompanion category) async {
+  Future<void> addCategory(TransactionCategoryInput category) async {
     await _categoriesDao.insertCategory(category);
     await loadCategories();
   }
