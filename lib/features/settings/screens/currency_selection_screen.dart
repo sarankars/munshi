@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/models/currency.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/providers/currency_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -81,109 +82,85 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     final currentCurrency = context.watch<CurrencyProvider>().selectedCurrency;
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
+    return CupertinoPageScaffold(
+      backgroundColor: colorScheme.surface,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: colorScheme.surface.withValues(alpha: 0.9),
+        border: null,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => Navigator.of(context).pop(),
+          child: Icon(
+            CupertinoIcons.back,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        middle: Text(
           'Select Currency',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          style: context.textTheme.headlineSmall.copyWith(
             fontWeight: FontWeight.bold,
             color: colorScheme.onSurface,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ),
-      body: Column(
-        children: [
-          // Search bar
-          FadeTransition(
-            opacity: _fadeAnimation,
-            child: Container(
-              margin: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(
-                  alpha: 0.6,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: colorScheme.outline.withValues(alpha: 0.2),
-                ),
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search currencies...',
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // Search bar
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: CupertinoSearchTextField(
+                  controller: _searchController,
+                  placeholder: 'Search currencies...',
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
+                  style: context.textTheme.bodyMedium.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                  placeholderStyle: context.textTheme.bodyMedium.copyWith(
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
-                  prefixIcon: Icon(
-                    Iconsax.search_normal_outline,
-                    color: colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.clear,
-                            color: colorScheme.onSurface.withValues(alpha: 0.6),
-                          ),
-                          onPressed: () {
-                            _searchController.clear();
-                            FocusScope.of(context).unfocus();
-                          },
-                        )
-                      : null,
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  filled: false,
+                  backgroundColor: colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
-                onTapOutside: (_) => FocusScope.of(context).unfocus(),
               ),
             ),
-          ),
 
-          // Currency list
-          Expanded(
-            child: _filteredCurrencies.isEmpty
-                ? _buildEmptyState(colorScheme)
-                : ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: _filteredCurrencies.length,
-                    itemBuilder: (context, index) {
-                      final currency = _filteredCurrencies[index];
-                      final isSelected = currency == currentCurrency;
-                      final animationIndex = index.clamp(
-                        0,
-                        _itemAnimations.length - 1,
-                      );
+            // Currency list
+            Expanded(
+              child: _filteredCurrencies.isEmpty
+                  ? _buildEmptyState(colorScheme)
+                  : ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: _filteredCurrencies.length,
+                      itemBuilder: (context, index) {
+                        final currency = _filteredCurrencies[index];
+                        final isSelected = currency == currentCurrency;
+                        final animationIndex = index.clamp(
+                          0,
+                          _itemAnimations.length - 1,
+                        );
 
-                      return SlideTransition(
-                        position: _itemAnimations[animationIndex],
-                        child: FadeTransition(
-                          opacity: _fadeAnimation,
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: Material(
-                              elevation: isSelected ? 4 : 0,
-                              borderRadius: BorderRadius.circular(16),
-                              shadowColor: colorScheme.shadow.withValues(
-                                alpha: 0.1,
-                              ),
-                              child: InkWell(
-                                onTap: () => _selectCurrency(currency),
-                                borderRadius: BorderRadius.circular(16),
+                        return SlideTransition(
+                          position: _itemAnimations[animationIndex],
+                          child: FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                onPressed: () => _selectCurrency(currency),
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
                                   padding: const EdgeInsets.all(16),
@@ -203,6 +180,16 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                             ),
                                       width: isSelected ? 2 : 1,
                                     ),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: colorScheme.shadow
+                                                  .withValues(alpha: 0.08),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ]
+                                        : null,
                                   ),
                                   child: Row(
                                     children: [
@@ -235,10 +222,8 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                             const SizedBox(height: 2),
                                             Text(
                                               currency.symbol,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
+                                              style: context.textTheme.bodySmall
+                                                  .copyWith(
                                                     color: isSelected
                                                         ? colorScheme.primary
                                                         : colorScheme.onSurface
@@ -263,10 +248,10 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                           children: [
                                             Text(
                                               currency.name,
-                                              style: Theme.of(context)
+                                              style: context
                                                   .textTheme
                                                   .titleMedium
-                                                  ?.copyWith(
+                                                  .copyWith(
                                                     color: isSelected
                                                         ? colorScheme
                                                               .onPrimaryContainer
@@ -279,10 +264,10 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                               children: [
                                                 Text(
                                                   currency.code,
-                                                  style: Theme.of(context)
+                                                  style: context
                                                       .textTheme
                                                       .bodyMedium
-                                                      ?.copyWith(
+                                                      .copyWith(
                                                         color: isSelected
                                                             ? colorScheme
                                                                   .onPrimaryContainer
@@ -322,10 +307,10 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                                   ),
                                                   child: Text(
                                                     currency.symbol,
-                                                    style: Theme.of(context)
+                                                    style: context
                                                         .textTheme
                                                         .bodySmall
-                                                        ?.copyWith(
+                                                        .copyWith(
                                                           color: isSelected
                                                               ? colorScheme
                                                                     .primary
@@ -355,7 +340,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                             shape: BoxShape.circle,
                                           ),
                                           child: Icon(
-                                            Icons.check,
+                                            CupertinoIcons.checkmark_alt,
                                             size: 16,
                                             color: colorScheme.onPrimary,
                                           ),
@@ -378,17 +363,17 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildEmptyState(ColorScheme colorScheme) {
+  Widget _buildEmptyState(AppColorScheme colorScheme) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Center(
@@ -412,7 +397,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
             const SizedBox(height: 24),
             Text(
               'No currencies found',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: context.textTheme.titleLarge.copyWith(
                 color: colorScheme.onSurface.withValues(alpha: 0.6),
                 fontWeight: FontWeight.w600,
               ),
@@ -420,7 +405,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
             const SizedBox(height: 8),
             Text(
               'Try searching with a different term',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: context.textTheme.bodyMedium.copyWith(
                 color: colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),

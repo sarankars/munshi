@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/models/period_type.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/dashboard/providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -54,7 +55,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
-        final colorScheme = Theme.of(context).colorScheme;
+        final colorScheme = context.colorScheme;
 
         if (dashboardProvider.isLoading || !dashboardProvider.hasData) {
           return _buildLoadingCard(colorScheme);
@@ -112,11 +113,10 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                               _getPeriodTitle(
                                 dashboardProvider.selectedPeriod.type,
                               ),
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              style: context.textTheme.titleMedium.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -134,12 +134,11 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                           ),
                           child: Text(
                             dashboardProvider.selectedPeriod.displayName,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: colorScheme.onSecondaryContainer,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 11,
-                                ),
+                            style: context.textTheme.bodySmall.copyWith(
+                              color: colorScheme.onSecondaryContainer,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                            ),
                           ),
                         ),
                       ],
@@ -156,25 +155,23 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                             children: [
                               Text(
                                 dashboardProvider.formattedTotalSpent,
-                                style: Theme.of(context).textTheme.displaySmall
-                                    ?.copyWith(
-                                      color: colorScheme.onSurface,
-                                      fontWeight: FontWeight.bold,
-                                      height: 0.9,
-                                    ),
+                                style: context.textTheme.displaySmall.copyWith(
+                                  color: colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                  height: 0.9,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 _getPeriodDescription(
                                   dashboardProvider.selectedPeriod.type,
                                 ),
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: colorScheme.onSurface.withValues(
-                                        alpha: 0.6,
-                                      ),
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                style: context.textTheme.bodyMedium.copyWith(
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.6,
+                                  ),
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ],
                           ),
@@ -192,7 +189,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                           child: _buildStatItem(
                             context,
                             icon: Iconsax.money_recive_outline,
-                            iconColor: Colors.green,
+                            iconColor: CupertinoColors.systemGreen,
                             label: 'Income',
                             value: dashboardProvider.formattedTotalIncome,
                             valueColor: colorScheme.onSurface,
@@ -209,8 +206,8 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                                 ? Iconsax.arrow_up_3_outline
                                 : Iconsax.arrow_down_outline,
                             iconColor: dashboardProvider.balance >= 0
-                                ? Colors.blue
-                                : Colors.orange,
+                                ? CupertinoColors.systemBlue
+                                : CupertinoColors.systemOrange,
                             label: 'Balance',
                             value: dashboardProvider.formatCurrency(
                               dashboardProvider.balance.abs(),
@@ -226,7 +223,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                           child: _buildStatItem(
                             context,
                             icon: Iconsax.calendar_outline,
-                            iconColor: Colors.purple,
+                            iconColor: CupertinoColors.systemPurple,
                             label: 'Daily Avg',
                             value: dashboardProvider.formattedAvgDaily,
                             valueColor: colorScheme.onSurface,
@@ -252,7 +249,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
     required String value,
     required Color valueColor,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -275,7 +272,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
           const SizedBox(height: 6),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium.copyWith(
               color: valueColor,
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -284,7 +281,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
           const SizedBox(height: 1),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            style: context.textTheme.bodySmall.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
               fontSize: 12,
@@ -321,7 +318,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
     }
   }
 
-  Widget _buildLoadingCard(ColorScheme colorScheme) {
+  Widget _buildLoadingCard(AppColorScheme colorScheme) {
     return SlideTransition(
       position: _summaryCardSlideAnimation,
       child: ScaleTransition(
@@ -432,7 +429,7 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
     );
   }
 
-  Widget _buildShimmerStatItem(ColorScheme colorScheme) {
+  Widget _buildShimmerStatItem(AppColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(

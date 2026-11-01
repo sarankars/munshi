@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import 'package:munshi/core/service_locator.dart';
 import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
@@ -17,14 +17,17 @@ import 'package:provider/provider.dart';
 
 /// Main entry point for the Munshi app.
 ///
-/// This function ensures Flutter bindings are initialized, preserves the native splash screen,
-/// sets up dependency injection using get_it, initializes the ThemeProvider asynchronously,
-/// and then removes the splash screen before running the app.
+/// This function ensures Flutter bindings are initialized, preserves the native
+/// splash screen, sets up dependency injection using get_it, initializes the
+/// ThemeProvider asynchronously, and then removes the splash screen before
+/// running the app.
 ///
 /// Non-transaction state is provided via [Provider]/[ChangeNotifier].
-/// The transaction module is provided via [BlocProvider] using [TransactionBloc].
+/// The transaction module is provided via [BlocProvider] using
+/// [TransactionBloc].
 void main() async {
-  // Ensure Flutter engine and widget binding is initialized before any async or plugin code.
+  // Ensure Flutter engine and widget binding is initialized before any async
+  // or plugin code.
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
   // Preserve the native splash screen until initialization is complete.
@@ -33,35 +36,49 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp();
 
-  // Register all app-wide singletons/services using get_it, including SharedPreferences and ThemeProvider.
-  // This ensures SharedPreferences is ready before ThemeProvider is created, allowing synchronous theme loading.
+  // Register all app-wide singletons/services using get_it, including
+  // SharedPreferences and ThemeProvider. This ensures SharedPreferences is
+  // ready before ThemeProvider is created, allowing synchronous theme loading.
   await setupLocator();
+
+  // Pre-warm fragment shaders in parallel to prevent first-frame white flashes
+  // or shader jank.
+  await LiquidGlassWidgets.initialize();
 
   // Remove the splash screen after all dependencies are initialized.
   FlutterNativeSplash.remove();
 
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<TransactionBloc>(
-          create: (_) => locator<TransactionBloc>(),
-        ),
-      ],
-      child: MultiProvider(
+    LiquidGlassWidgets.wrap(
+      adaptiveQuality: true,
+      brightnessResolver: CupertinoTheme.maybeBrightnessOf,
+      theme: GlassThemeData.simple(
+        blur: 12,
+        thickness: 25,
+        quality: GlassQuality.standard,
+      ),
+      child: MultiBlocProvider(
         providers: [
-          ChangeNotifierProvider.value(value: locator<ThemeProvider>()),
-          ChangeNotifierProvider.value(value: locator<CurrencyProvider>()),
-          ChangeNotifierProvider.value(value: locator<PeriodProvider>()),
-          ChangeNotifierProvider(
-            create: (_) => DashboardProvider(
-              locator<DashboardDataService>(),
-              locator<PeriodProvider>(),
-              locator<CurrencyProvider>(),
-            ),
+          BlocProvider<TransactionBloc>(
+            create: (_) => locator<TransactionBloc>(),
           ),
-          ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ],
-        child: const Munshi(),
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: locator<ThemeProvider>()),
+            ChangeNotifierProvider.value(value: locator<CurrencyProvider>()),
+            ChangeNotifierProvider.value(value: locator<PeriodProvider>()),
+            ChangeNotifierProvider(
+              create: (_) => DashboardProvider(
+                locator<DashboardDataService>(),
+                locator<PeriodProvider>(),
+                locator<CurrencyProvider>(),
+              ),
+            ),
+            ChangeNotifierProvider(create: (_) => CategoryProvider()),
+          ],
+          child: const Munshi(),
+        ),
       ),
     ),
   );
@@ -69,27 +86,28 @@ void main() async {
 
 /// Root widget for the Munshi app.
 ///
-/// Sets up Material Design 3 theming using Google Fonts and provides theme switching
-/// based on the ThemeProvider's state. The MainScreen is the home widget.
+/// Sets up Cupertino theming using Google Fonts and provides theme
+/// switching based on the ThemeProvider's state. The MainScreen is the home
+/// widget.
 class Munshi extends StatelessWidget {
+  /// Creates a [Munshi] root application widget.
   const Munshi({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Create the MaterialTheme using the Manrope font for all text styles.
-    final theme = MaterialTheme(
-      GoogleFonts.manropeTextTheme(Typography.material2021().englishLike),
-    );
+    final platformBrightness = MediaQuery.platformBrightnessOf(context);
 
-    // Listen to ThemeProvider for theme changes and rebuild MaterialApp accordingly.
+    // Listen to ThemeProvider for theme changes and rebuild CupertinoApp
+    // accordingly.
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        return MaterialApp(
+        final effectiveBrightness = themeProvider.resolveBrightness(
+          platformBrightness,
+        );
+        return CupertinoApp(
           title: 'Munshi',
           debugShowCheckedModeBanner: false,
-          theme: theme.light(),
-          darkTheme: theme.dark(),
-          themeMode: themeProvider.themeMode,
+          theme: AppCupertinoTheme.ofBrightness(effectiveBrightness),
           home: const MainScreen(), // Main navigation and dashboard
         );
       },

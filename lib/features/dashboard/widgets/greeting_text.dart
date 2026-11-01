@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:munshi/core/theme.dart';
 
 class GreetingText extends StatelessWidget {
   const GreetingText({super.key});
@@ -18,12 +19,12 @@ class GreetingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Text(
       _getTimeBasedGreeting(),
-      style: Theme.of(
-        context,
-      ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+      style: context.textTheme.bodyMedium.copyWith(
+        color: colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }

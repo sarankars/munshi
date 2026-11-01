@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/dashboard/providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -88,7 +89,7 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
-        final colorScheme = Theme.of(context).colorScheme;
+        final colorScheme = context.colorScheme;
 
         // Get stat-specific data
         final statData = _getStatData(dashboardProvider);
@@ -179,13 +180,12 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                             // Value with improved typography
                             Text(
                               statData.value,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color: colorScheme.onSurface,
-                                    height: 1,
-                                    letterSpacing: -0.3,
-                                  ),
+                              style: context.textTheme.titleLarge.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: colorScheme.onSurface,
+                                height: 1,
+                                letterSpacing: -0.3,
+                              ),
                             ),
 
                             const SizedBox(height: 4),
@@ -196,18 +196,18 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                                 Expanded(
                                   child: Text(
                                     statData.title,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: colorScheme.onSurface
-                                              .withValues(alpha: 0.7),
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.1,
-                                          fontSize: 14,
-                                        ),
+                                    style: context.textTheme.bodySmall.copyWith(
+                                      color: colorScheme.onSurface.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.1,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                                 Icon(
-                                  Icons.trending_up_rounded,
+                                  Iconsax.trend_up_outline,
                                   size: 14,
                                   color: statData.accentColor.withValues(
                                     alpha: 0.6,
@@ -237,19 +237,19 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
           title: 'Transactions',
           value: provider.formattedTransactionCount,
           icon: Iconsax.receipt_search_outline,
-          accentColor: Colors.blue,
+          accentColor: CupertinoColors.systemBlue,
         );
       case DashboardStatType.biggestSpend:
         return _StatData(
           title: 'Biggest Spend',
           value: provider.formattedBiggestSpend,
           icon: Iconsax.card_pos_outline,
-          accentColor: Colors.orange,
+          accentColor: CupertinoColors.systemOrange,
         );
     }
   }
 
-  Widget _buildLoadingWidget(ColorScheme colorScheme) {
+  Widget _buildLoadingWidget(AppColorScheme colorScheme) {
     return SlideTransition(
       position: _entrySlideAnimation,
       child: ScaleTransition(

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:munshi/core/theme.dart';
 
 class IconPickerDialog extends StatefulWidget {
   const IconPickerDialog({super.key, this.selectedIcon});
@@ -124,130 +125,166 @@ class _IconPickerDialogState extends State<IconPickerDialog> {
 
   List<IconData> get _filteredIcons {
     if (_searchQuery.isEmpty) return _icons;
-    // For simplicity, just return all icons when searching
-    // In a real app, you might want to add icon names and filter by them
     return _icons;
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = context.colorScheme;
 
-    return Dialog(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Select Icon',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Iconsax.close_circle_outline),
-                  ),
-                ],
-              ),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: colorScheme.outline.withValues(alpha: 0.2),
             ),
-            const Divider(height: 1),
-
-            // Search bar
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search icons...',
-                  prefixIcon: const Icon(Iconsax.search_normal_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value.toLowerCase();
-                  });
-                },
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.shadow.withValues(alpha: 0.2),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
               ),
-            ),
-
-            // Icons grid
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemCount: _filteredIcons.length,
-                itemBuilder: (context, index) {
-                  final icon = _filteredIcons[index];
-                  final isSelected = _selectedIcon?.codePoint == icon.codePoint;
-
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedIcon = icon;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? colorScheme.primaryContainer
-                            : colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected
-                              ? colorScheme.primary
-                              : Colors.transparent,
-                          width: 2,
+            ],
+          ),
+          child: Column(
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Select Icon',
+                        style: context.textTheme.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: () => Navigator.of(context).pop(),
                       child: Icon(
-                        icon,
-                        color: isSelected
-                            ? colorScheme.primary
-                            : colorScheme.onSurface,
+                        Iconsax.close_circle_outline,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
-            ),
+              Container(
+                height: 1,
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
 
-            // Action buttons
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+              // Search bar
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: CupertinoSearchTextField(
+                  placeholder: 'Search icons...',
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
                   ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _selectedIcon == null
-                        ? null
-                        : () => Navigator.of(context).pop(_selectedIcon),
-                    child: const Text('Select'),
+                  style: context.textTheme.bodyMedium.copyWith(
+                    color: colorScheme.onSurface,
                   ),
-                ],
+                  backgroundColor: colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value.toLowerCase();
+                    });
+                  },
+                ),
               ),
-            ),
-          ],
+
+              // Icons grid
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: _filteredIcons.length,
+                  itemBuilder: (context, index) {
+                    final icon = _filteredIcons[index];
+                    final isSelected =
+                        _selectedIcon?.codePoint == icon.codePoint;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedIcon = icon;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? colorScheme.primaryContainer
+                              : colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? colorScheme.primary
+                                : CupertinoColors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(
+                          icon,
+                          color: isSelected
+                              ? colorScheme.primary
+                              : colorScheme.onSurface,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Action buttons
+              Container(
+                height: 1,
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    const SizedBox(width: 8),
+                    CupertinoButton.filled(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      onPressed: _selectedIcon == null
+                          ? null
+                          : () => Navigator.of(context).pop(_selectedIcon),
+                      child: const Text('Select'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

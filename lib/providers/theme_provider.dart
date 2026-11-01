@@ -1,5 +1,17 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+/// Represents the user's preferred theme mode.
+enum AppThemeMode {
+  /// Always use light appearance.
+  light,
+
+  /// Always use dark appearance.
+  dark,
+
+  /// Follow the system appearance.
+  system,
+}
 
 class ThemeProvider extends ChangeNotifier {
   /// Creates a ThemeProvider and loads the theme synchronously from SharedPreferences.
@@ -8,17 +20,29 @@ class ThemeProvider extends ChangeNotifier {
   }
   static const String _themeKey = 'theme_mode';
 
-  ThemeMode _themeMode = ThemeMode.light;
+  AppThemeMode _themeMode = AppThemeMode.light;
 
-  ThemeMode get themeMode => _themeMode;
+  AppThemeMode get themeMode => _themeMode;
+
+  /// Resolves the active [Brightness] given the platform's [platformBrightness].
+  Brightness resolveBrightness(Brightness platformBrightness) {
+    switch (_themeMode) {
+      case AppThemeMode.light:
+        return Brightness.light;
+      case AppThemeMode.dark:
+        return Brightness.dark;
+      case AppThemeMode.system:
+        return platformBrightness;
+    }
+  }
 
   String get themeModeString {
     switch (_themeMode) {
-      case ThemeMode.light:
+      case AppThemeMode.light:
         return 'Light';
-      case ThemeMode.dark:
+      case AppThemeMode.dark:
         return 'Dark';
-      case ThemeMode.system:
+      case AppThemeMode.system:
         return 'Auto';
     }
   }
@@ -26,16 +50,16 @@ class ThemeProvider extends ChangeNotifier {
   final SharedPreferences prefs;
 
   void setThemeMode(String themeString) {
-    ThemeMode newThemeMode;
+    AppThemeMode newThemeMode;
     switch (themeString) {
       case 'Light':
-        newThemeMode = ThemeMode.light;
+        newThemeMode = AppThemeMode.light;
       case 'Dark':
-        newThemeMode = ThemeMode.dark;
+        newThemeMode = AppThemeMode.dark;
       case 'Auto':
-        newThemeMode = ThemeMode.system;
+        newThemeMode = AppThemeMode.system;
       default:
-        newThemeMode = ThemeMode.light;
+        newThemeMode = AppThemeMode.light;
     }
 
     if (_themeMode != newThemeMode) {
@@ -46,8 +70,16 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   void _loadThemeFromPrefs() {
-    final themeModeIndex = prefs.getInt(_themeKey) ?? 0;
-    _themeMode = ThemeMode.values[themeModeIndex];
+    // Note: Previously ThemeMode had [system, light, dark] order in Flutter:
+    // index 0 = system, 1 = light, 2 = dark, or if saved via index we clamp safely.
+    final themeModeIndex = prefs.getInt(_themeKey);
+    if (themeModeIndex != null &&
+        themeModeIndex >= 0 &&
+        themeModeIndex < AppThemeMode.values.length) {
+      _themeMode = AppThemeMode.values[themeModeIndex];
+    } else {
+      _themeMode = AppThemeMode.light;
+    }
     notifyListeners();
   }
 

@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/daily_transactions.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 import 'package:munshi/features/transactions/presentation/widgets/transaction_tile.dart';
@@ -65,7 +66,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return AnimatedBuilder(
       animation: _slideAnimation,
       builder: (context, child) {
@@ -76,21 +77,19 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
             child: widget.groupedTransactions.isEmpty && !widget.isLoadingMore
                 ? _buildEmptyState(colorScheme)
                 : SlidableAutoCloseBehavior(
-                    child: Scrollbar(
+                    child: CupertinoScrollbar(
                       controller: widget.controller,
-                      interactive: true,
-                      thumbVisibility: false,
-                      trackVisibility: false,
                       radius: const Radius.circular(4),
                       child: ListView(
                         controller: widget.controller,
+                        padding: const EdgeInsets.only(bottom: 110),
                         children: [
-                          ..._buildGroupedTransactionWidgets(),
+                          ..._buildGroupedTransactionWidgets(colorScheme),
                           if (widget.isLoadingMore)
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Center(
-                                child: CircularProgressIndicator.adaptive(),
+                                child: CupertinoActivityIndicator(),
                               ),
                             ),
                         ],
@@ -103,7 +102,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
     );
   }
 
-  List<Widget> _buildGroupedTransactionWidgets() {
+  List<Widget> _buildGroupedTransactionWidgets(AppColorScheme colorScheme) {
     final widgets = <Widget>[];
     var globalIndex = 0;
 
@@ -128,10 +127,12 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
         // Add separator if not the last transaction of the date
         if (transactionIndex < transactions.length - 1) {
           widgets.add(
-            const Divider(
+            Container(
               height: 1,
-              thickness: 1,
-              indent: GroupedTransactionList._kDividerIndent,
+              margin: const EdgeInsets.only(
+                left: GroupedTransactionList._kDividerIndent,
+              ),
+              color: colorScheme.outline.withValues(alpha: 0.15),
             ),
           );
         }
@@ -168,6 +169,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
       builder: (context, value, child) {
         final slideValue = Curves.easeOutCubic.transform(value);
         final fadeValue = Curves.easeOut.transform(value);
+        final colorScheme = context.colorScheme;
 
         return Transform.translate(
           offset: Offset(0, 30 * (1 - slideValue)),
@@ -184,8 +186,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
                 children: [
                   Text(
                     displayText,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: context.textTheme.titleSmall.copyWith(
+                      color: colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -193,9 +195,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
                   Expanded(
                     child: Container(
                       height: 1,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outline.withValues(alpha: 0.3),
+                      color: colorScheme.outline.withValues(alpha: 0.3),
                     ),
                   ),
                 ],
@@ -245,7 +245,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
     );
   }
 
-  Widget _buildEmptyState(ColorScheme colorScheme) {
+  Widget _buildEmptyState(AppColorScheme colorScheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -257,7 +257,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
               borderRadius: BorderRadius.circular(24),
             ),
             child: Icon(
-              Icons.receipt_long_outlined,
+              CupertinoIcons.doc_text,
               size: 48,
               color: colorScheme.onSurfaceVariant,
             ),
@@ -265,7 +265,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
           const SizedBox(height: 24),
           Text(
             'No transactions found',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: context.textTheme.headlineSmall.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
@@ -273,7 +273,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
           const SizedBox(height: 8),
           Text(
             'Try adjusting your filters or search terms',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,

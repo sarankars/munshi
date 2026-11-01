@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// A simple shimmer placeholder widget using the shimmer package
@@ -16,7 +17,7 @@ class ShimmerPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Shimmer.fromColors(
       baseColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
@@ -42,7 +43,7 @@ class AIProcessingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -60,10 +61,7 @@ class AIProcessingIndicator extends StatelessWidget {
           SizedBox(
             height: 20,
             width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation(colorScheme.primary),
-            ),
+            child: CupertinoActivityIndicator(color: colorScheme.primary),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -73,7 +71,7 @@ class AIProcessingIndicator extends StatelessWidget {
               children: [
                 Text(
                   'AI is analyzing your receipt',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  style: context.textTheme.titleSmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onPrimaryContainer,
                   ),
@@ -81,7 +79,7 @@ class AIProcessingIndicator extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Fields will auto-fill in a moment...',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: context.textTheme.bodySmall.copyWith(
                     color: colorScheme.onPrimaryContainer.withValues(
                       alpha: 0.8,
                     ),

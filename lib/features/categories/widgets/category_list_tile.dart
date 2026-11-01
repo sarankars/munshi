@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
 import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
@@ -17,8 +18,7 @@ class CategoryListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = context.colorScheme;
     final categoryIcon = category.displayIcon;
     final categoryColor = category.displayColor;
 
@@ -36,95 +36,94 @@ class CategoryListTile extends StatelessWidget {
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                // Icon
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: categoryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: categoryColor.withValues(alpha: 0.3),
-                      width: 1.5,
+      child: CupertinoButton(
+        padding: const EdgeInsets.all(16),
+        minimumSize: Size.zero,
+        onPressed: onTap,
+        child: Row(
+          children: [
+            // Icon
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: categoryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: categoryColor.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(categoryIcon, color: categoryColor, size: 24),
+            ),
+            const SizedBox(width: 16),
+
+            // Category name
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    category.name,
+                    style: context.textTheme.titleMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
                     ),
                   ),
-                  child: Icon(categoryIcon, color: categoryColor, size: 24),
-                ),
-                const SizedBox(width: 16),
-
-                // Category name
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        category.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurface,
+                  if (category.isDefault)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
                         ),
-                      ),
-                      if (category.isDefault)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              'Default',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: colorScheme.onPrimaryContainer,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'Default',
+                          style: context.textTheme.labelSmall.copyWith(
+                            color: colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                    ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            // Actions
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CupertinoButton(
+                  padding: const EdgeInsets.all(8),
+                  minimumSize: Size.zero,
+                  onPressed: onTap,
+                  child: Icon(
+                    Iconsax.edit_outline,
+                    color: colorScheme.primary,
+                    size: 20,
                   ),
                 ),
-
-                // Actions
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: onTap,
-                      icon: Icon(
-                        Iconsax.edit_outline,
-                        color: colorScheme.primary,
-                      ),
-                      tooltip: 'Edit',
+                if (!category.isDefault)
+                  CupertinoButton(
+                    padding: const EdgeInsets.all(8),
+                    minimumSize: Size.zero,
+                    onPressed: onDelete,
+                    child: Icon(
+                      Iconsax.trash_outline,
+                      color: colorScheme.error,
+                      size: 20,
                     ),
-                    if (!category.isDefault)
-                      IconButton(
-                        onPressed: onDelete,
-                        icon: Icon(
-                          Iconsax.trash_outline,
-                          color: colorScheme.error,
-                        ),
-                        tooltip: 'Delete',
-                      ),
-                  ],
-                ),
+                  ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
