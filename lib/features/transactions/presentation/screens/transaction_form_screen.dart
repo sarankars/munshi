@@ -10,13 +10,22 @@ import 'package:munshi/features/transactions/domain/entities/transaction_categor
 import 'package:munshi/features/transactions/presentation/widgets/form_builder_category_chips.dart';
 import 'package:munshi/widgets/cupertino_toast.dart';
 
+/// A full-screen form for creating a new transaction or editing an existing
+/// one.
 class TransactionFormScreen extends StatefulWidget {
+  /// Creates a [TransactionFormScreen].
+  ///
+  /// Supply [transaction] to pre-populate the form when editing.
   const TransactionFormScreen({
     required this.onSubmit,
     super.key,
     this.transaction,
   });
+
+  /// The existing transaction to edit, or `null` when creating a new one.
   final Transaction? transaction;
+
+  /// Called with the completed [Transaction] when the form is submitted.
   final void Function(Transaction transaction) onSubmit;
 
   @override
@@ -239,7 +248,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                       decimal: true,
                     ),
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      FilteringTextInputFormatter.allow(RegExp('[0-9.]')),
                     ],
                     placeholder: 'Enter amount',
                     padding: const EdgeInsets.symmetric(
@@ -464,7 +473,9 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      isEditing ? Iconsax.tick_circle_bold : Iconsax.save_2_bold,
+                      isEditing
+                          ? Iconsax.tick_circle_bold
+                          : Iconsax.save_2_bold,
                       size: 20,
                     ),
                     const SizedBox(width: 8),

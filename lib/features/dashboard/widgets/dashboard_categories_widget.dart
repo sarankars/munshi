@@ -7,7 +7,9 @@ import 'package:munshi/features/dashboard/widgets/category_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+/// Widget that shows spending broken down by category for the selected period.
 class DashboardCategoriesWidget extends StatefulWidget {
+  /// Creates a [DashboardCategoriesWidget].
   const DashboardCategoriesWidget({super.key});
 
   @override
@@ -172,7 +174,8 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
               ),
               const SizedBox(height: 12),
               Text(
-                'Add some transactions to see your spending breakdown by category',
+                'Add some transactions to see your spending breakdown '
+                'by category',
                 style: context.textTheme.bodyMedium.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   height: 1.5,

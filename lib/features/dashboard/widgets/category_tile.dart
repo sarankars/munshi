@@ -5,20 +5,31 @@ import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
 import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
+/// A tile that displays spending information for a [TransactionCategory].
 class CategoryTile extends StatefulWidget {
+  /// Creates a [CategoryTile].
   const CategoryTile({
     required this.category,
     required this.onTap,
     super.key,
     this.spendingAmount = 0.0,
     this.transactionCount = 0,
-    this.animationDelay = const Duration(),
+    this.animationDelay = Duration.zero,
   });
 
+  /// The category to display, or `null` for uncategorised.
   final TransactionCategory? category;
+
+  /// Called when the tile is tapped.
   final VoidCallback onTap;
+
+  /// Total amount spent in this category during the current period.
   final double spendingAmount;
+
+  /// Number of transactions in this category during the current period.
   final int transactionCount;
+
+  /// Delay before the entry animation starts.
   final Duration animationDelay;
 
   @override

@@ -18,22 +18,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The global [GetIt] service-locator instance.
 final GetIt locator = GetIt.instance;
 
-/// Sets up the service locator by registering necessary singletons and lazy singletons.
+/// Sets up the service locator by registering singletons and lazy singletons.
 ///
 /// This function performs the following:
-/// - Retrieves an instance of [SharedPreferences] and registers it as a singleton.
-/// - Registers [ThemeProvider] as a lazy singleton, initialized with the shared preferences.
-/// - Registers [CurrencyProvider] as a lazy singleton, initialized with the shared preferences.
-/// - Registers [PeriodProvider] as a lazy singleton, initialized with the shared preferences.
+/// - Retrieves an instance of [SharedPreferences] and registers it as a
+///   singleton.
+/// - Registers [ThemeProvider] as a lazy singleton, initialized with the
+///   shared preferences.
+/// - Registers [CurrencyProvider] as a lazy singleton, initialized with the
+///   shared preferences.
+/// - Registers [PeriodProvider] as a lazy singleton, initialized with the
+///   shared preferences.
 /// - Registers [AppDatabase] as a lazy singleton for database access.
 /// - Registers [CategoryLocalDataSource] as a lazy singleton.
-/// - Registers [TransactionsDao] as a lazy singleton, initialized with the [AppDatabase] instance.
-/// - Registers [DashboardDataService] as a lazy singleton, initialized with the [TransactionsDao] instance.
-/// - Registers [TransactionRepository] (backed by [TransactionRepositoryImpl]) as a lazy singleton.
+/// - Registers [TransactionLocalDataSource] as a lazy singleton, initialized
+///   with the [AppDatabase] instance.
+/// - Registers [DashboardDataService] as a lazy singleton, initialized with
+///   the [TransactionLocalDataSource] instance.
+/// - Registers [TransactionRepository] (backed by [TransactionRepositoryImpl])
+///   as a lazy singleton.
 /// - Registers the four transaction use cases as lazy singletons.
-/// - Registers [TransactionBloc] as a factory so each call produces a fresh instance.
+/// - Registers [TransactionBloc] as a factory so each call produces a fresh
+///   instance.
 ///
-/// Call this function during app initialization to ensure all dependencies are available via the locator.
+/// Call this function during app initialization to ensure all dependencies are
+/// available via the locator.
 Future<void> setupLocator() async {
   final prefs = await SharedPreferences.getInstance();
   locator

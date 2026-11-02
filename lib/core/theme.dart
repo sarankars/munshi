@@ -39,39 +39,103 @@ class AppColorScheme {
     required this.surfaceContainerHighest,
   });
 
+  /// Brightness mode of this color scheme.
   final Brightness brightness;
+
+  /// Primary brand color.
   final Color primary;
+
+  /// Contrasting color drawn on [primary].
   final Color onPrimary;
+
+  /// Container tint derived from [primary].
   final Color primaryContainer;
+
+  /// Contrasting color drawn on [primaryContainer].
   final Color onPrimaryContainer;
+
+  /// Secondary accent color.
   final Color secondary;
+
+  /// Contrasting color drawn on [secondary].
   final Color onSecondary;
+
+  /// Container tint derived from [secondary].
   final Color secondaryContainer;
+
+  /// Contrasting color drawn on [secondaryContainer].
   final Color onSecondaryContainer;
+
+  /// Tertiary accent color.
   final Color tertiary;
+
+  /// Contrasting color drawn on [tertiary].
   final Color onTertiary;
+
+  /// Container tint derived from [tertiary].
   final Color tertiaryContainer;
+
+  /// Contrasting color drawn on [tertiaryContainer].
   final Color onTertiaryContainer;
+
+  /// Semantic error color.
   final Color error;
+
+  /// Contrasting color drawn on [error].
   final Color onError;
+
+  /// Container tint derived from [error].
   final Color errorContainer;
+
+  /// Contrasting color drawn on [errorContainer].
   final Color onErrorContainer;
+
+  /// Default background surface color.
   final Color surface;
+
+  /// Primary text and icon color on [surface].
   final Color onSurface;
+
+  /// Muted text and icon color on [surface].
   final Color onSurfaceVariant;
+
+  /// Standard border and divider color.
   final Color outline;
+
+  /// Subtle border and divider color.
   final Color outlineVariant;
+
+  /// Drop shadow color.
   final Color shadow;
+
+  /// Modal backdrop scrim color.
   final Color scrim;
+
+  /// Inverse surface color for high-contrast banners/toasts.
   final Color inverseSurface;
+
+  /// Contrasting text and icon color on [inverseSurface].
   final Color onInverseSurface;
+
+  /// Primary accent color for inverse surfaces.
   final Color inversePrimary;
+
+  /// Lowest-elevation surface container color.
   final Color surfaceContainerLowest;
+
+  /// Low-elevation surface container color.
   final Color surfaceContainerLow;
+
+  /// Default surface container color.
   final Color surfaceContainer;
+
+  /// High-elevation surface container color.
   final Color surfaceContainerHigh;
+
+  /// Highest-elevation surface container color.
   final Color surfaceContainerHighest;
 
+  /// Light mode color palette.
   static const AppColorScheme light = AppColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff24265c),
@@ -107,6 +171,7 @@ class AppColorScheme {
     surfaceContainerHighest: Color(0xffe4e1e9),
   );
 
+  /// Dark mode color palette.
   static const AppColorScheme dark = AppColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xffc0c1ff),
@@ -145,58 +210,68 @@ class AppColorScheme {
 
 /// Typography hierarchy for Munshi's Cupertino UI using Manrope.
 class AppTextStyles {
+  /// Creates an [AppTextStyles] bound to [_colorScheme].
   const AppTextStyles(this._colorScheme);
 
   final AppColorScheme _colorScheme;
 
+  /// Display small text style (36pt bold).
   TextStyle get displaySmall => GoogleFonts.manrope(
     fontSize: 36,
     fontWeight: FontWeight.w700,
     color: _colorScheme.onSurface,
   );
 
+  /// Headline small text style (24pt bold).
   TextStyle get headlineSmall => GoogleFonts.manrope(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: _colorScheme.onSurface,
   );
 
+  /// Title large text style (20pt semi-bold).
   TextStyle get titleLarge => GoogleFonts.manrope(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: _colorScheme.onSurface,
   );
 
+  /// Title medium text style (16pt semi-bold).
   TextStyle get titleMedium => GoogleFonts.manrope(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: _colorScheme.onSurface,
   );
 
+  /// Title small text style (14pt semi-bold).
   TextStyle get titleSmall => GoogleFonts.manrope(
     fontSize: 14,
     fontWeight: FontWeight.w600,
     color: _colorScheme.onSurface,
   );
 
+  /// Body large text style (16pt regular).
   TextStyle get bodyLarge => GoogleFonts.manrope(
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: _colorScheme.onSurface,
   );
 
+  /// Body medium text style (14pt regular).
   TextStyle get bodyMedium => GoogleFonts.manrope(
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: _colorScheme.onSurface,
   );
 
+  /// Body small text style (12pt regular muted).
   TextStyle get bodySmall => GoogleFonts.manrope(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: _colorScheme.onSurfaceVariant,
   );
 
+  /// Label small text style (11pt medium muted).
   TextStyle get labelSmall => GoogleFonts.manrope(
     fontSize: 11,
     fontWeight: FontWeight.w500,
@@ -208,12 +283,14 @@ class AppTextStyles {
 class AppCupertinoTheme {
   const AppCupertinoTheme._();
 
+  /// Returns the [AppColorScheme] matching [brightness].
   static AppColorScheme schemeFor(Brightness brightness) {
     return brightness == Brightness.dark
         ? AppColorScheme.dark
         : AppColorScheme.light;
   }
 
+  /// Builds a [CupertinoThemeData] for [brightness].
   static CupertinoThemeData ofBrightness(Brightness brightness) {
     final scheme = schemeFor(brightness);
     final baseTextStyle = GoogleFonts.manrope(

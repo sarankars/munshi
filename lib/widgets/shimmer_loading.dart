@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart';
 
 /// A simple shimmer placeholder widget using the shimmer package
 class ShimmerPlaceholder extends StatelessWidget {
+  /// Creates a [ShimmerPlaceholder].
   const ShimmerPlaceholder({
     super.key,
     this.width,
@@ -12,8 +13,13 @@ class ShimmerPlaceholder extends StatelessWidget {
     this.borderRadius = 12,
   });
 
+  /// Optional fixed width; if `null` the widget fills available space.
   final double? width;
+
+  /// Height of the placeholder. Defaults to 56.
   final double height;
+
+  /// Corner radius of the placeholder rectangle. Defaults to 12.
   final double borderRadius;
 
   @override
@@ -42,9 +48,10 @@ class ShimmerPlaceholder extends StatelessWidget {
   }
 }
 
-/// AI Processing Indicator - shows at the top of the form
-/// Note: This widget is conditionally rendered, so it only appears when processing
+/// AI Processing Indicator - shows at the top of the form.
+/// Note: This widget is conditionally rendered when processing.
 class AIProcessingIndicator extends StatelessWidget {
+  /// Creates an [AIProcessingIndicator].
   const AIProcessingIndicator({super.key});
 
   @override

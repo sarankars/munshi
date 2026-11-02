@@ -20,7 +20,8 @@ abstract interface class TransactionRepository {
   /// Persists a new [transaction] in the data store.
   Future<void> addTransaction(Transaction transaction);
 
-  /// Replaces an existing transaction with the values provided by [transaction].
+  /// Replaces an existing transaction with the values provided by
+  /// [transaction].
   Future<void> updateTransaction(Transaction transaction);
 
   /// Permanently removes [transaction] from the data store.

@@ -7,7 +7,9 @@ import 'package:munshi/features/transactions/domain/entities/transaction_categor
 import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 import 'package:provider/provider.dart';
 
+/// Displays a wrap of selectable category chips filtered by [type].
 class FormBuilderCategoryChips extends StatelessWidget {
+  /// Creates a [FormBuilderCategoryChips] widget.
   const FormBuilderCategoryChips({
     required this.name,
     required this.type,
@@ -17,10 +19,19 @@ class FormBuilderCategoryChips extends StatelessWidget {
     this.onChanged,
   });
 
+  /// The form field identifier.
   final String name;
+
+  /// The transaction type used to filter available categories.
   final TransactionType type;
+
+  /// The initial category selection when [selectedValue] is not provided.
   final TransactionCategory? initialValue;
+
+  /// The currently selected category.
   final TransactionCategory? selectedValue;
+
+  /// Callback invoked when the user selects or deselects a category chip.
   final ValueChanged<TransactionCategory?>? onChanged;
 
   @override
@@ -45,9 +56,7 @@ class FormBuilderCategoryChips extends StatelessWidget {
               padding: EdgeInsets.zero,
               minimumSize: Size.zero,
               onPressed: () {
-                if (onChanged != null) {
-                  onChanged!(isSelected ? null : category);
-                }
+                onChanged?.call(isSelected ? null : category);
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),

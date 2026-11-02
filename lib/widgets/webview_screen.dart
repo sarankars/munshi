@@ -1,12 +1,20 @@
+import 'dart:async';
+
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/theme.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+/// Displays an in-app web page using [WebViewWidget].
 class WebViewScreen extends StatefulWidget {
+  /// Creates a [WebViewScreen] for the given [url] and navigation bar [title].
   const WebViewScreen({required this.url, required this.title, super.key});
+
+  /// The URL to load in the web view.
   final String url;
+
+  /// The title displayed in the navigation bar.
   final String title;
 
   @override
@@ -26,9 +34,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   void _initializeWebView() {
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
+    _controller = WebViewController();
+    unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(
+      _controller.setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
             setState(() {
@@ -49,8 +58,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
             });
           },
         ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
+      ),
+    );
+    unawaited(_controller.loadRequest(Uri.parse(widget.url)));
   }
 
   @override
@@ -85,7 +95,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     _isLoading = true;
                     _hasError = false;
                   });
-                  _controller.reload();
+                  unawaited(_controller.reload());
                 },
                 child: Icon(
                   Iconsax.refresh_outline,
@@ -172,7 +182,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   _isLoading = true;
                   _hasError = false;
                 });
-                _controller.reload();
+                unawaited(_controller.reload());
               },
               child: const Row(
                 mainAxisSize: MainAxisSize.min,

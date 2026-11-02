@@ -217,10 +217,12 @@ class TransactionLocalDataSource extends DatabaseAccessor<AppDatabase>
     );
   }
 
-  /// Retrieves spending data grouped by transaction category for a given period.
+  /// Retrieves spending data grouped by transaction category for a given
+  /// period.
   ///
-  /// Calculates total amount spent and transaction count for each expense category
-  /// within the specified date range using efficient SQL GROUP BY aggregation.
+  /// Calculates total amount spent and transaction count for each expense
+  /// category within the specified date range using efficient SQL GROUP BY
+  /// aggregation.
   ///
   /// Parameters:
   ///   - [period]: The date period for which to calculate spending by category

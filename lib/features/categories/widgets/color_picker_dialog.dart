@@ -2,9 +2,14 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/theme.dart';
 
+/// A dialog that lets the user pick a color from a predefined palette.
 class ColorPickerDialog extends StatefulWidget {
+  /// Creates a [ColorPickerDialog].
+  ///
+  /// Pass [selectedColor] to pre-select a color.
   const ColorPickerDialog({super.key, this.selectedColor});
 
+  /// The initially selected color, or `null` if none.
   final Color? selectedColor;
 
   @override
@@ -223,7 +228,8 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                         horizontal: 20,
                         vertical: 10,
                       ),
-                      onPressed: () => Navigator.of(context).pop(_selectedColor),
+                      onPressed: () =>
+                          Navigator.of(context).pop(_selectedColor),
                       child: const Text('Select'),
                     ),
                   ],

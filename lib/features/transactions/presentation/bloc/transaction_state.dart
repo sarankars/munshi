@@ -70,8 +70,9 @@ class TransactionState extends Equatable {
     final groupedMap = <String, List<Transaction>>{};
     for (final transaction in transactions) {
       final d = transaction.date;
-      final key =
-          '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+      final month = d.month.toString().padLeft(2, '0');
+      final day = d.day.toString().padLeft(2, '0');
+      final key = '${d.year}-$month-$day';
       groupedMap.putIfAbsent(key, () => []).add(transaction);
     }
 

@@ -64,8 +64,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
     // Watch CurrencyProvider to rebuild entire screen when currency changes.
-    // This is necessary because currency formatting occurs throughout the widget tree
-    // in transaction tiles, filter displays, and detail modals.
+    // This is necessary because currency formatting occurs throughout the
+    // widget tree in transaction tiles, filter displays, and detail modals.
     context.watch<CurrencyProvider>();
     return BlocBuilder<TransactionBloc, TransactionState>(
       builder: (context, state) {
@@ -238,9 +238,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
     if (filter.hasAmountFilter) {
       if (filter.minAmount != null && filter.maxAmount != null) {
-        activeFilters.add(
-          'Amount: ₹${filter.minAmount!.toStringAsFixed(0)} - ₹${filter.maxAmount!.toStringAsFixed(0)}',
-        );
+        final min = filter.minAmount!.toStringAsFixed(0);
+        final max = filter.maxAmount!.toStringAsFixed(0);
+        activeFilters.add('Amount: ₹$min - ₹$max');
       } else if (filter.minAmount != null) {
         activeFilters.add('Min: ₹${filter.minAmount!.toStringAsFixed(0)}');
       } else if (filter.maxAmount != null) {

@@ -5,7 +5,9 @@ import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
 import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
+/// A list tile that displays a single [TransactionCategory] with edit/delete actions.
 class CategoryListTile extends StatelessWidget {
+  /// Creates a [CategoryListTile] for the given [category].
   const CategoryListTile({
     required this.category,
     required this.onTap,
@@ -13,8 +15,13 @@ class CategoryListTile extends StatelessWidget {
     super.key,
   });
 
+  /// The category to display.
   final TransactionCategory category;
+
+  /// Called when the tile is tapped (typically opens the edit dialog).
   final VoidCallback onTap;
+
+  /// Called when the delete action is triggered.
   final VoidCallback onDelete;
 
   @override

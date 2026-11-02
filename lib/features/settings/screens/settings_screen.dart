@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:figma_squircle/figma_squircle.dart';
@@ -18,7 +19,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Screen that presents all user-configurable app settings.
 class SettingsScreen extends StatefulWidget {
+  /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
 
   @override
@@ -45,7 +48,8 @@ class _SettingsScreenState extends State<SettingsScreen>
 
     // Create staggered animations for each section
     _itemAnimations = List<Animation<Offset>>.generate(
-      6, // Number of animated sections (Preferences, Notifications, Security, Support, Logout, Footer)
+      // Preferences, Notifications, Security, Support, Logout, Footer
+      6,
       (int index) =>
           Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
             CurvedAnimation(
@@ -125,7 +129,7 @@ Best regards,
       );
       await launchUrl(emailUri);
       return;
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) {
         showCupertinoToast(context, 'Error: $e', isError: true);
       }
@@ -191,7 +195,7 @@ Best regards,
 
       await launchUrl(emailUri);
       return;
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) {
         showCupertinoToast(context, 'Error: $e', isError: true);
       }
@@ -237,7 +241,7 @@ Best regards,
                               subtitle:
                                   currencyProvider.selectedCurrency.displayName,
                               onTap: () {
-                                HapticFeedback.lightImpact();
+                                unawaited(HapticFeedback.lightImpact());
                                 Navigator.of(context).push(
                                   CupertinoPageRoute<void>(
                                     builder: (_) =>
@@ -267,7 +271,7 @@ Best regards,
                                   if (value != null) {
                                     periodProvider
                                         .setDefaultPeriodByDisplayName(value);
-                                    HapticFeedback.lightImpact();
+                                    unawaited(HapticFeedback.lightImpact());
                                   }
                                 },
                                 items: PeriodType.values
@@ -303,7 +307,7 @@ Best regards,
                                 onChanged: (String? value) {
                                   if (value != null) {
                                     themeProvider.setThemeMode(value);
-                                    HapticFeedback.lightImpact();
+                                    unawaited(HapticFeedback.lightImpact());
                                   }
                                 },
                                 icon: Icon(
@@ -357,7 +361,7 @@ Best regards,
                             value: _dailyReport,
                             onChanged: (bool value) {
                               setState(() => _dailyReport = value);
-                              HapticFeedback.lightImpact();
+                              unawaited(HapticFeedback.lightImpact());
                             },
                             activeTrackColor: colorScheme.primary,
                           ),
@@ -382,7 +386,7 @@ Best regards,
                           title: 'Privacy Policy & Terms',
                           subtitle: 'Read our privacy policy',
                           onTap: () {
-                            HapticFeedback.lightImpact();
+                            unawaited(HapticFeedback.lightImpact());
                             // Navigate to privacy policy
                             const privacyPolicyUrl = String.fromEnvironment(
                               'PRIVACY_POLICY_URL',
@@ -424,7 +428,7 @@ Best regards,
                           title: 'Help & FAQ',
                           subtitle: 'Get help and find answers',
                           onTap: () {
-                            HapticFeedback.lightImpact();
+                            unawaited(HapticFeedback.lightImpact());
                             // Navigate to FAQ
                             const faqUrl = String.fromEnvironment(
                               'FAQ_URL',
@@ -450,8 +454,8 @@ Best regards,
                           title: 'Report a Bug',
                           subtitle: 'Let us know about issues',
                           onTap: () {
-                            HapticFeedback.lightImpact();
-                            _reportBug();
+                            unawaited(HapticFeedback.lightImpact());
+                            unawaited(_reportBug());
                           },
                           trailing: Icon(
                             CupertinoIcons.chevron_right,
@@ -463,8 +467,8 @@ Best regards,
                           title: 'Feedback',
                           subtitle: 'Share your thoughts',
                           onTap: () {
-                            HapticFeedback.lightImpact();
-                            _sendFeedback();
+                            unawaited(HapticFeedback.lightImpact());
+                            unawaited(_sendFeedback());
                           },
                           trailing: Icon(
                             CupertinoIcons.chevron_right,

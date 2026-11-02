@@ -15,9 +15,14 @@ extension TransactionCategoryUiExtensions on TransactionCategory {
 extension CategoryIconSpecUiExtensions on CategoryIconSpec {
   /// Creates Flutter [IconData] from this icon specification.
   IconData toIconData() {
+    // Dynamic IconData instantiation is intentional here because user-created
+    // category icons are persisted in SQLite and decoded at runtime.
     return IconData(
+      // ignore: non_const_argument_for_const_parameter, dynamic icon from DB
       codePoint,
+      // ignore: non_const_argument_for_const_parameter, dynamic icon from DB
       fontFamily: fontFamily,
+      // ignore: non_const_argument_for_const_parameter, dynamic icon from DB
       fontPackage: fontPackage,
     );
   }

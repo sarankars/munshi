@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -10,7 +12,9 @@ import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 import 'package:munshi/widgets/cupertino_toast.dart';
 
+/// A swipeable list tile that represents a single transaction.
 class TransactionTile extends StatefulWidget {
+  /// Creates a [TransactionTile].
   const TransactionTile({
     required this.onTap,
     required this.transaction,
@@ -19,10 +23,20 @@ class TransactionTile extends StatefulWidget {
     this.onEdit,
     this.onCategoryTap,
   });
+
+  /// Called when the tile is tapped (opens the detail sheet).
   final VoidCallback onTap;
+
+  /// The transaction to display.
   final Transaction transaction;
+
+  /// Called when the user swipes to delete.
   final Future<void> Function(Transaction transaction)? onDelete;
+
+  /// Called when the user swipes to edit.
   final Future<void> Function(Transaction transaction)? onEdit;
+
+  /// Called when the category chip is tapped.
   final VoidCallback? onCategoryTap;
 
   @override
@@ -146,8 +160,9 @@ class _TransactionTileState extends State<TransactionTile>
   }
 
   void _editTransaction() {
-    if (widget.onEdit != null) {
-      widget.onEdit!(widget.transaction);
+    final onEdit = widget.onEdit;
+    if (onEdit != null) {
+      unawaited(onEdit(widget.transaction));
     }
   }
 

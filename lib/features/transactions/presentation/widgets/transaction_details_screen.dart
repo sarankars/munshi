@@ -6,8 +6,12 @@ import 'package:munshi/core/extensions/currency_extensions.dart';
 import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 
+/// A bottom sheet that shows the full details of a single transaction.
 class TransactionDetailsScreen extends StatefulWidget {
+  /// Creates a [TransactionDetailsScreen] for the given [transaction].
   const TransactionDetailsScreen({required this.transaction, super.key});
+
+  /// The transaction whose details are displayed.
   final Transaction transaction;
   @override
   State<TransactionDetailsScreen> createState() =>

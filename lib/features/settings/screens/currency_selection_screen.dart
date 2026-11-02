@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +9,9 @@ import 'package:munshi/core/theme.dart';
 import 'package:munshi/providers/currency_provider.dart';
 import 'package:provider/provider.dart';
 
+/// Screen that allows the user to search and select their preferred currency.
 class CurrencySelectionScreen extends StatefulWidget {
+  /// Creates a [CurrencySelectionScreen].
   const CurrencySelectionScreen({super.key});
 
   @override
@@ -76,7 +80,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
   }
 
   void _selectCurrency(Currency currency) {
-    HapticFeedback.lightImpact();
+    unawaited(HapticFeedback.lightImpact());
     context.read<CurrencyProvider>().setSelectedCurrency(currency);
     Navigator.of(context).pop();
   }
@@ -254,96 +258,10 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
 
                                       // Currency details
                                       Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              currency.name,
-                                              style: context
-                                                  .textTheme
-                                                  .titleMedium
-                                                  .copyWith(
-                                                    color: isSelected
-                                                        ? colorScheme
-                                                              .onPrimaryContainer
-                                                        : colorScheme.onSurface,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  currency.code,
-                                                  style: context
-                                                      .textTheme
-                                                      .bodyMedium
-                                                      .copyWith(
-                                                        color: isSelected
-                                                            ? colorScheme
-                                                                  .onPrimaryContainer
-                                                                  .withValues(
-                                                                    alpha: 0.8,
-                                                                  )
-                                                            : colorScheme
-                                                                  .onSurface
-                                                                  .withValues(
-                                                                    alpha: 0.7,
-                                                                  ),
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 2,
-                                                      ),
-                                                  decoration: ShapeDecoration(
-                                                    color: isSelected
-                                                        ? colorScheme.primary
-                                                              .withValues(
-                                                                alpha: 0.2,
-                                                              )
-                                                        : colorScheme.outline
-                                                              .withValues(
-                                                                alpha: 0.1,
-                                                              ),
-                                                    shape: SmoothRectangleBorder(
-                                                      borderRadius:
-                                                          SmoothBorderRadius(
-                                                            cornerRadius: 8,
-                                                            cornerSmoothing:
-                                                                0.6,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    currency.symbol,
-                                                    style: context
-                                                        .textTheme
-                                                        .bodySmall
-                                                        .copyWith(
-                                                          color: isSelected
-                                                              ? colorScheme
-                                                                    .primary
-                                                              : colorScheme
-                                                                    .onSurface
-                                                                    .withValues(
-                                                                      alpha:
-                                                                          0.7,
-                                                                    ),
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                        child: _buildCurrencyDetails(
+                                          currency: currency,
+                                          isSelected: isSelected,
+                                          colorScheme: colorScheme,
                                         ),
                                       ),
 
@@ -386,6 +304,70 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCurrencyDetails({
+    required Currency currency,
+    required bool isSelected,
+    required AppColorScheme colorScheme,
+  }) {
+    final titleColor = isSelected
+        ? colorScheme.onPrimaryContainer
+        : colorScheme.onSurface;
+    final codeColor = isSelected
+        ? colorScheme.onPrimaryContainer.withValues(alpha: 0.8)
+        : colorScheme.onSurface.withValues(alpha: 0.7);
+    final badgeBg = isSelected
+        ? colorScheme.primary.withValues(alpha: 0.2)
+        : colorScheme.outline.withValues(alpha: 0.1);
+    final badgeTextColor = isSelected
+        ? colorScheme.primary
+        : colorScheme.onSurface.withValues(alpha: 0.7);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          currency.name,
+          style: context.textTheme.titleMedium.copyWith(
+            color: titleColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Text(
+              currency.code,
+              style: context.textTheme.bodyMedium.copyWith(
+                color: codeColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: ShapeDecoration(
+                color: badgeBg,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 8,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
+              ),
+              child: Text(
+                currency.symbol,
+                style: context.textTheme.bodySmall.copyWith(
+                  color: badgeTextColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

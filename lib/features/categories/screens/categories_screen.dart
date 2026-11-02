@@ -10,7 +10,10 @@ import 'package:munshi/features/transactions/domain/entities/transaction_categor
 import 'package:munshi/widgets/cupertino_toast.dart';
 import 'package:provider/provider.dart';
 
+/// Screen that lists expense and income categories and allows the user to
+/// add, edit, or delete them.
 class CategoriesScreen extends StatefulWidget {
+  /// Creates a [CategoriesScreen].
   const CategoriesScreen({super.key});
 
   @override
@@ -52,7 +55,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       builder: (context) => CupertinoAlertDialog(
         title: const Text('Delete Category'),
         content: Text(
-          'Are you sure you want to delete "$categoryName"? This action cannot be undone.',
+          'Are you sure you want to delete "$categoryName"? '
+          'This action cannot be undone.',
         ),
         actions: [
           CupertinoDialogAction(
@@ -74,7 +78,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         if (mounted) {
           showCupertinoToast(context, 'Category deleted successfully');
         }
-      } catch (e) {
+      } on Object catch (e) {
         if (mounted) {
           showCupertinoToast(
             context,

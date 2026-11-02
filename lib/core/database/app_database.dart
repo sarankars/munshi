@@ -16,9 +16,16 @@ part 'app_database.g.dart';
   tables: [Transactions, TransactionCategories],
   daos: [TransactionLocalDataSource, CategoryLocalDataSource],
 )
+/// The main Drift database for the Munshi app.
+///
+/// Manages [Transactions] and [TransactionCategories] tables and exposes
+/// [TransactionLocalDataSource] and [CategoryLocalDataSource] DAOs.
 class AppDatabase extends _$AppDatabase {
+  /// Creates an [AppDatabase] backed by a persistent on-device SQLite file.
   AppDatabase() : super(_openConnection());
 
+  /// Creates an [AppDatabase] using the provided query executor, intended for
+  /// testing with an in-memory database.
   AppDatabase.forTesting(super.e);
 
   @override
@@ -226,7 +233,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> _updateCategoryColors() async {
-    // Update Healthcare category color from greenAccent (0xFF69F0AE) to green (0xFF4CAF50)
+    // Update Healthcare category color from greenAccent (0xFF69F0AE) to
+    // green (0xFF4CAF50)
     await customStatement(
       '''
       UPDATE transaction_categories 
@@ -236,7 +244,8 @@ class AppDatabase extends _$AppDatabase {
       [0xFF4CAF50, 0xFF69F0AE],
     );
 
-    // Update Utilities category color from tealAccent (0xFF64FFDA) to teal (0xFF009688)
+    // Update Utilities category color from tealAccent (0xFF64FFDA) to
+    // teal (0xFF009688)
     await customStatement(
       '''
       UPDATE transaction_categories 

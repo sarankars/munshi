@@ -16,7 +16,8 @@ class GetTransactionsPage {
   ///
   /// [limit] – maximum number of results to return.
   /// [offset] – number of results to skip (for pagination).
-  /// [filter] – optional filtering criteria (date range, type, category, amount).
+  /// [filter] – optional filtering criteria (date range, type, category,
+  /// amount).
   Future<List<Transaction>> call({
     required int limit,
     required int offset,
