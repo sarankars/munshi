@@ -6,6 +6,11 @@ on:
       notes:
         description: "Release notes (optional)"
         required: false
+      renew_certificates:
+        description: "Renew certificates and profiles via match (set true if certificate expired)"
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-and-deploy-ios:
@@ -49,10 +54,17 @@ jobs:
           gem install bundler
           bundle install
 
+      - name: ⚙️ Configure Git for Fastlane commits
+        run: |
+          git config --global user.email "bot@sarankar.com"
+          git config --global user.name "Fastlane CI"
+
       - name: 🚀 Deploy iOS app to TestFlight
         working-directory: ios
         env:
           RELEASE_NOTES: ${{ github.event.inputs.notes }}
+          MATCH_READONLY: ${{ github.event.inputs.renew_certificates && 'false' || 'true' }}
         run: |
           echo "Notes: $RELEASE_NOTES"
+          echo "Match readonly: $MATCH_READONLY"
           bundle exec fastlane beta
