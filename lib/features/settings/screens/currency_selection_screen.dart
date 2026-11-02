@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -130,7 +131,10 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                   ),
                   backgroundColor: colorScheme.surfaceContainerHighest
                       .withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 14,
+                    cornerSmoothing: 0.6,
+                  ),
                 ),
               ),
             ),
@@ -164,23 +168,28 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
                                   padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
+                                  decoration: ShapeDecoration(
                                     color: isSelected
                                         ? colorScheme.primaryContainer
                                               .withValues(alpha: 0.8)
                                         : colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? colorScheme.primary.withValues(
-                                              alpha: 0.3,
-                                            )
-                                          : colorScheme.outline.withValues(
-                                              alpha: 0.2,
-                                            ),
-                                      width: isSelected ? 2 : 1,
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 16,
+                                        cornerSmoothing: 0.6,
+                                      ),
+                                      side: BorderSide(
+                                        color: isSelected
+                                            ? colorScheme.primary.withValues(
+                                                alpha: 0.3,
+                                              )
+                                            : colorScheme.outline.withValues(
+                                                alpha: 0.2,
+                                              ),
+                                        width: isSelected ? 2 : 1,
+                                      ),
                                     ),
-                                    boxShadow: isSelected
+                                    shadows: isSelected
                                         ? [
                                             BoxShadow(
                                               color: colorScheme.shadow
@@ -197,7 +206,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                       Container(
                                         width: 48,
                                         height: 48,
-                                        decoration: BoxDecoration(
+                                        decoration: ShapeDecoration(
                                           color: isSelected
                                               ? colorScheme.primary.withValues(
                                                   alpha: 0.1,
@@ -205,8 +214,11 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                               : colorScheme
                                                     .surfaceContainerHighest
                                                     .withValues(alpha: 0.5),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 12,
+                                              cornerSmoothing: 0.6,
+                                            ),
                                           ),
                                         ),
                                         child: Column(
@@ -290,7 +302,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                                         horizontal: 8,
                                                         vertical: 2,
                                                       ),
-                                                  decoration: BoxDecoration(
+                                                  decoration: ShapeDecoration(
                                                     color: isSelected
                                                         ? colorScheme.primary
                                                               .withValues(
@@ -300,10 +312,14 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen>
                                                               .withValues(
                                                                 alpha: 0.1,
                                                               ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
+                                                    shape: SmoothRectangleBorder(
+                                                      borderRadius:
+                                                          SmoothBorderRadius(
+                                                            cornerRadius: 8,
+                                                            cornerSmoothing:
+                                                                0.6,
+                                                          ),
+                                                    ),
                                                   ),
                                                   child: Text(
                                                     currency.symbol,

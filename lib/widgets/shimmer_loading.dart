@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/theme.dart';
 import 'package:shimmer/shimmer.dart';
@@ -27,9 +28,14 @@ class ShimmerPlaceholder extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(borderRadius),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: borderRadius,
+              cornerSmoothing: 0.6,
+            ),
+          ),
         ),
       ),
     );
@@ -48,12 +54,17 @@ class AIProcessingIndicator extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.primary.withValues(alpha: 0.2),
-          width: 1.5,
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(
+            color: colorScheme.primary.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
       ),
       child: Row(

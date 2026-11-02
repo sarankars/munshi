@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -203,20 +204,18 @@ Best regards,
 
     return CupertinoPageScaffold(
       backgroundColor: colorScheme.surface,
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: colorScheme.surface.withValues(alpha: 0.9),
-        border: null,
-        middle: Text(
-          'Settings',
-          style: context.textTheme.headlineSmall.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
-        ),
-      ),
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
+          CupertinoSliverNavigationBar(
+            transitionBetweenRoutes: false,
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.9),
+            border: null,
+            largeTitle: Text(
+              'Settings',
+              style: TextStyle(color: colorScheme.onSurface),
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
             sliver: SliverList(
@@ -508,9 +507,14 @@ Best regards,
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(10),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
               child: Icon(
                 icon,
@@ -530,12 +534,17 @@ Best regards,
         ),
         const SizedBox(height: 8),
         Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(
             color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.2),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 15,
+                cornerSmoothing: 0.6,
+              ),
+              side: BorderSide(
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
             ),
           ),
           child: Column(
@@ -562,9 +571,14 @@ Best regards,
   Widget _buildFooter(AppColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 20,
+            cornerSmoothing: 0.6,
+          ),
+        ),
       ),
       child: Column(
         children: [

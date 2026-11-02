@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/core/theme.dart';
@@ -54,16 +55,21 @@ class FormBuilderCategoryChips extends StatelessWidget {
                   horizontal: 14,
                   vertical: 9,
                 ),
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: isSelected
                       ? colorScheme.primaryContainer
                       : colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected
-                        ? colorScheme.primary
-                        : colorScheme.outline.withValues(alpha: 0.25),
-                    width: isSelected ? 1.5 : 1,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 0.6,
+                    ),
+                    side: BorderSide(
+                      color: isSelected
+                          ? colorScheme.primary
+                          : colorScheme.outline.withValues(alpha: 0.25),
+                      width: isSelected ? 1.5 : 1,
+                    ),
                   ),
                 ),
                 child: Row(

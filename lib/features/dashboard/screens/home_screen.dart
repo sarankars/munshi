@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/dashboard/providers/dashboard_provider.dart';
@@ -49,12 +50,17 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: ShapeDecoration(
                               color: colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(25),
-                              border: Border.all(
-                                color: colorScheme.outline.withValues(
-                                  alpha: 0.1,
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 25,
+                                  cornerSmoothing: 0.6,
+                                ),
+                                side: BorderSide(
+                                  color: colorScheme.outline.withValues(
+                                    alpha: 0.1,
+                                  ),
                                 ),
                               ),
                             ),

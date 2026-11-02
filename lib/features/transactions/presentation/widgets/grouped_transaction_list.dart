@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -79,7 +80,10 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
                 : SlidableAutoCloseBehavior(
                     child: CupertinoScrollbar(
                       controller: widget.controller,
-                      radius: const Radius.circular(4),
+                      radius: const SmoothRadius(
+                        cornerRadius: 4,
+                        cornerSmoothing: 0.6,
+                      ),
                       child: ListView(
                         controller: widget.controller,
                         padding: const EdgeInsets.only(bottom: 110),
@@ -252,9 +256,14 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
         children: [
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(24),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 24,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
             child: Icon(
               CupertinoIcons.doc_text,

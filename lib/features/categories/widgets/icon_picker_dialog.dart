@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/theme.dart';
@@ -137,13 +138,18 @@ class _IconPickerDialogState extends State<IconPickerDialog> {
         padding: const EdgeInsets.all(20),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.2),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 20,
+                cornerSmoothing: 0.6,
+              ),
+              side: BorderSide(
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
             ),
-            boxShadow: [
+            shadows: [
               BoxShadow(
                 color: colorScheme.shadow.withValues(alpha: 0.2),
                 blurRadius: 24,
@@ -196,7 +202,10 @@ class _IconPickerDialogState extends State<IconPickerDialog> {
                     color: colorScheme.onSurface,
                   ),
                   backgroundColor: colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
+                  ),
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value.toLowerCase();
@@ -227,16 +236,21 @@ class _IconPickerDialogState extends State<IconPickerDialog> {
                         });
                       },
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: isSelected
                               ? colorScheme.primaryContainer
                               : colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected
-                                ? colorScheme.primary
-                                : CupertinoColors.transparent,
-                            width: 2,
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? colorScheme.primary
+                                  : CupertinoColors.transparent,
+                              width: 2,
+                            ),
                           ),
                         ),
                         child: Icon(
@@ -271,6 +285,10 @@ class _IconPickerDialogState extends State<IconPickerDialog> {
                     ),
                     const SizedBox(width: 8),
                     CupertinoButton.filled(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 0.6,
+                      ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 10,

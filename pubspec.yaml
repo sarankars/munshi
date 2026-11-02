@@ -63,6 +63,7 @@ dependencies:
   webview_flutter: ^4.10.0
   url_launcher: ^6.3.1
   liquid_glass_widgets: ^1.16.1
+  figma_squircle: ^0.6.3
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -155,6 +156,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                             vertical: 4,
                           ),
                           minimumSize: Size.zero,
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 8,
+                            cornerSmoothing: 0.6,
+                          ),
                           onPressed: () => context.read<TransactionBloc>().add(
                             const TransactionFilterCleared(),
                           ),

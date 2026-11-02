@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/theme.dart';
@@ -103,8 +104,16 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 15),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+      decoration: ShapeDecoration(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.1),
+          ),
+        ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -113,10 +122,7 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
             colorScheme.surface.withValues(alpha: 0.8),
           ],
         ),
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.1),
-        ),
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 8,
@@ -134,14 +140,19 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
               Container(
                 width: 72,
                 height: 72,
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: colorScheme.primaryContainer.withValues(
                     alpha: 0.3,
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.2),
-                    width: 1.5,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 20,
+                      cornerSmoothing: 0.6,
+                    ),
+                    side: BorderSide(
+                      color: colorScheme.primary.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
                   ),
                 ),
                 child: Icon(
@@ -192,8 +203,16 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+      decoration: ShapeDecoration(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.1),
+          ),
+        ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -202,10 +221,7 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
             colorScheme.surface.withValues(alpha: 0.8),
           ],
         ),
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.1),
-        ),
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 8,
@@ -224,9 +240,14 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
             Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(12),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -239,18 +260,28 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
                   Container(
                     width: double.infinity,
                     height: 18,
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(9),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 9,
+                          cornerSmoothing: 0.6,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Container(
                     width: 120,
                     height: 14,
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(7),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 7,
+                          cornerSmoothing: 0.6,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -261,9 +292,14 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
             Container(
               width: 32,
               height: 32,
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(8),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 8,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
             ),
           ],

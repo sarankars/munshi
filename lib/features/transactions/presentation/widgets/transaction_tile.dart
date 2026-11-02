@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -86,9 +87,14 @@ class _TransactionTileState extends State<TransactionTile>
           child: Container(
             width: 44,
             height: 44,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: categoryColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
             child: Icon(
               widget.transaction.category?.displayIcon ??

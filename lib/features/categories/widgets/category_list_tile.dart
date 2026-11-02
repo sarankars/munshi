@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/theme.dart';
@@ -24,11 +25,16 @@ class CategoryListTile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
-        boxShadow: [
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.1)),
+        ),
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 8,
@@ -46,12 +52,17 @@ class CategoryListTile extends StatelessWidget {
             Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: categoryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: categoryColor.withValues(alpha: 0.3),
-                  width: 1.5,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
+                  ),
+                  side: BorderSide(
+                    color: categoryColor.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
               ),
               child: Icon(categoryIcon, color: categoryColor, size: 24),
@@ -79,9 +90,14 @@ class CategoryListTile extends StatelessWidget {
                           horizontal: 8,
                           vertical: 2,
                         ),
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(6),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 6,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                         child: Text(
                           'Default',

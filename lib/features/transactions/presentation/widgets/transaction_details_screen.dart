@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
@@ -19,10 +20,14 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     final colorScheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 24, cornerSmoothing: 0.6),
+          ),
+        ),
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.15),
             blurRadius: 20,
@@ -38,9 +43,14 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             height: 4,
             width: 40,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 2,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
 
@@ -125,9 +135,14 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           Container(
             margin: const EdgeInsets.only(top: 4),
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.primaryContainer.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(10),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
             child: Icon(icon, size: 20, color: colorScheme.primary),
           ),
@@ -158,11 +173,16 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           if (label == 'Status')
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: CupertinoColors.systemGreen.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: CupertinoColors.systemGreen.withValues(alpha: 0.4),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
+                  ),
+                  side: BorderSide(
+                    color: CupertinoColors.systemGreen.withValues(alpha: 0.4),
+                  ),
                 ),
               ),
               child: Text(

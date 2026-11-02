@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/models/period_type.dart';
 import 'package:munshi/core/theme.dart';
@@ -23,9 +24,13 @@ class PeriodSelectorBottomSheet extends StatelessWidget {
         24,
         MediaQuery.paddingOf(context).bottom + 24,
       ),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 20, cornerSmoothing: 0.6),
+          ),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -36,9 +41,14 @@ class PeriodSelectorBottomSheet extends StatelessWidget {
             child: Container(
               width: 40,
               height: 4,
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 2,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
             ),
           ),
@@ -113,17 +123,22 @@ class PeriodSelectorBottomSheet extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected
-                ? colorScheme.primary
-                : colorScheme.outline.withValues(alpha: 0.2),
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(16),
+        decoration: ShapeDecoration(
           color: isSelected
               ? colorScheme.primary.withValues(alpha: 0.08)
               : CupertinoColors.transparent,
+          shape: SmoothRectangleBorder(
+            side: BorderSide(
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.outline.withValues(alpha: 0.2),
+              width: isSelected ? 2 : 1,
+            ),
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 16,
+              cornerSmoothing: 0.6,
+            ),
+          ),
         ),
         child: Row(
           children: [
@@ -131,11 +146,16 @@ class PeriodSelectorBottomSheet extends StatelessWidget {
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: isSelected
                     ? colorScheme.primary.withValues(alpha: 0.2)
                     : colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
               child: Icon(
                 icon,

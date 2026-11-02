@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/extensions/currency_extensions.dart';
 import 'package:munshi/core/theme.dart';
@@ -106,8 +107,16 @@ class _CategoryTileState extends State<CategoryTile>
               onPressed: widget.onTap,
               child: Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                decoration: ShapeDecoration(
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 16,
+                      cornerSmoothing: 0.6,
+                    ),
+                    side: BorderSide(
+                      color: colorScheme.outline.withValues(alpha: 0.1),
+                    ),
+                  ),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -116,10 +125,7 @@ class _CategoryTileState extends State<CategoryTile>
                       colorScheme.surface.withValues(alpha: 0.8),
                     ],
                   ),
-                  border: Border.all(
-                    color: colorScheme.outline.withValues(alpha: 0.1),
-                  ),
-                  boxShadow: [
+                  shadows: [
                     BoxShadow(
                       color: colorScheme.shadow.withValues(alpha: 0.05),
                       blurRadius: 8,
@@ -133,11 +139,16 @@ class _CategoryTileState extends State<CategoryTile>
                     Container(
                       width: 48,
                       height: 48,
-                      decoration: BoxDecoration(
+                      decoration: ShapeDecoration(
                         color: categoryColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: categoryColor.withValues(alpha: 0.3),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 12,
+                            cornerSmoothing: 0.6,
+                          ),
+                          side: BorderSide(
+                            color: categoryColor.withValues(alpha: 0.3),
+                          ),
                         ),
                       ),
                       child: Icon(
@@ -187,11 +198,16 @@ class _CategoryTileState extends State<CategoryTile>
                     Container(
                       width: 32,
                       height: 32,
-                      decoration: BoxDecoration(
+                      decoration: ShapeDecoration(
                         color: colorScheme.primaryContainer.withValues(
                           alpha: 0.3,
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 8,
+                            cornerSmoothing: 0.6,
+                          ),
+                        ),
                       ),
                       child: Icon(
                         CupertinoIcons.chevron_right,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/theme.dart';
 
@@ -39,10 +40,15 @@ void showCupertinoToast(
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: isError ? colorScheme.error : colorScheme.inverseSurface,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 14,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
+                shadows: [
                   BoxShadow(
                     color: colorScheme.shadow.withValues(alpha: 0.18),
                     blurRadius: 12,

@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/theme.dart';
 
@@ -107,13 +108,18 @@ class RoundedDropdown<T> extends StatelessWidget {
         padding:
             contentPadding ??
             const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color:
               backgroundColor ??
               colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(
-            color: borderColor ?? colorScheme.outline.withValues(alpha: 0.15),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: borderRadius,
+              cornerSmoothing: 0.6,
+            ),
+            side: BorderSide(
+              color: borderColor ?? colorScheme.outline.withValues(alpha: 0.15),
+            ),
           ),
         ),
         child: Row(

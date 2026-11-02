@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/theme.dart';
@@ -115,13 +116,18 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       scale: _scaleAnimation.value,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.1),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 20,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.1),
+                            ),
                           ),
-                          boxShadow: [
+                          shadows: [
                             BoxShadow(
                               color: colorScheme.shadow.withValues(
                                 alpha: _elevationAnimation.value,
@@ -144,14 +150,19 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
+                                  decoration: ShapeDecoration(
                                     color: statData.accentColor.withValues(
                                       alpha: 0.1,
                                     ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: statData.accentColor.withValues(
-                                        alpha: 0.2,
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 12,
+                                        cornerSmoothing: 0.6,
+                                      ),
+                                      side: BorderSide(
+                                        color: statData.accentColor.withValues(
+                                          alpha: 0.2,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -165,11 +176,16 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                                 Container(
                                   width: 6,
                                   height: 6,
-                                  decoration: BoxDecoration(
+                                  decoration: ShapeDecoration(
                                     color: statData.accentColor.withValues(
                                       alpha: 0.4,
                                     ),
-                                    borderRadius: BorderRadius.circular(3),
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 3,
+                                        cornerSmoothing: 0.6,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -258,13 +274,18 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
           opacity: _entryController,
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 20,
+                  cornerSmoothing: 0.6,
+                ),
+                side: BorderSide(
+                  color: colorScheme.outline.withValues(alpha: 0.1),
+                ),
               ),
-              boxShadow: [
+              shadows: [
                 BoxShadow(
                   color: colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
@@ -288,17 +309,27 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       Container(
                         width: 36,
                         height: 36,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                       Container(
                         width: 6,
                         height: 6,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(3),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 3,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -310,9 +341,14 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                   Container(
                     width: double.infinity,
                     height: 24,
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(8),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 8,
+                          cornerSmoothing: 0.6,
+                        ),
+                      ),
                     ),
                   ),
 
@@ -324,9 +360,14 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       Expanded(
                         child: Container(
                           height: 14,
-                          decoration: BoxDecoration(
+                          decoration: ShapeDecoration(
                             color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(7),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 7,
+                                cornerSmoothing: 0.6,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -334,9 +375,14 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       Container(
                         width: 14,
                         height: 14,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(7),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 7,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                     ],

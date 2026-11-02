@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
@@ -245,10 +246,24 @@ class _CategoryList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Iconsax.category_outline,
-                  size: 64,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: ShapeDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
+                    ),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 24,
+                        cornerSmoothing: 0.6,
+                      ),
+                    ),
+                  ),
+                  child: Icon(
+                    Iconsax.category_outline,
+                    size: 48,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(

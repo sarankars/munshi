@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
@@ -147,13 +148,18 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
         padding: const EdgeInsets.all(20),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400),
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.2),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 20,
+                cornerSmoothing: 0.6,
+              ),
+              side: BorderSide(
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
             ),
-            boxShadow: [
+            shadows: [
               BoxShadow(
                 color: colorScheme.shadow.withValues(alpha: 0.2),
                 blurRadius: 24,
@@ -226,7 +232,10 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                       ),
                       decoration: BoxDecoration(
                         color: colorScheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 0.6,
+                        ),
                         border: Border.all(
                           color: _nameError != null
                               ? colorScheme.error
@@ -257,20 +266,30 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                       onPressed: _selectIcon,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.4),
+                        decoration: ShapeDecoration(
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.4),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
                             Container(
                               width: 48,
                               height: 48,
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: _selectedColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
+                                  ),
+                                ),
                               ),
                               child: Icon(_selectedIcon, color: _selectedColor),
                             ),
@@ -299,25 +318,35 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                       onPressed: _selectColor,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.4),
+                        decoration: ShapeDecoration(
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.4),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
                             Container(
                               width: 48,
                               height: 48,
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: _selectedColor,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: colorScheme.outline.withValues(
-                                    alpha: 0.2,
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
                                   ),
-                                  width: 2,
+                                  side: BorderSide(
+                                    color: colorScheme.outline.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                             ),
@@ -353,6 +382,10 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                         ),
                         const SizedBox(width: 8),
                         CupertinoButton.filled(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 12,
+                            cornerSmoothing: 0.6,
+                          ),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,
                             vertical: 10,

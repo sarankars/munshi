@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/theme.dart';
@@ -162,6 +163,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
             ),
             const SizedBox(height: 32),
             CupertinoButton.filled(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 12,
+                cornerSmoothing: 0.6,
+              ),
               onPressed: () {
                 setState(() {
                   _isLoading = true;

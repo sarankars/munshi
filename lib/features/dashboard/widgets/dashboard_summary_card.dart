@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/models/period_type.dart';
@@ -70,13 +71,18 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: colorScheme.outline.withValues(alpha: 0.1),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 20,
+                      cornerSmoothing: 0.6,
+                    ),
+                    side: BorderSide(
+                      color: colorScheme.outline.withValues(alpha: 0.1),
+                    ),
                   ),
-                  boxShadow: [
+                  shadows: [
                     BoxShadow(
                       color: colorScheme.shadow.withValues(alpha: 0.05),
                       blurRadius: 10,
@@ -96,11 +102,16 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                           children: [
                             Container(
                               padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: colorScheme.primary.withValues(
                                   alpha: 0.1,
                                 ),
-                                borderRadius: BorderRadius.circular(12),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
+                                  ),
+                                ),
                               ),
                               child: Icon(
                                 Iconsax.wallet_3_outline,
@@ -125,11 +136,16 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                             vertical: 6,
                             horizontal: 12,
                           ),
-                          decoration: BoxDecoration(
+                          decoration: ShapeDecoration(
                             color: colorScheme.secondaryContainer,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: colorScheme.outline,
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 15,
+                                cornerSmoothing: 0.6,
+                              ),
+                              side: BorderSide(
+                                color: colorScheme.outline,
+                              ),
                             ),
                           ),
                           child: Text(
@@ -253,19 +269,29 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.05)),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 14,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.05)),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
             child: Icon(icon, color: iconColor, size: 20),
           ),
@@ -328,13 +354,18 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 20,
+                  cornerSmoothing: 0.6,
+                ),
+                side: BorderSide(
+                  color: colorScheme.outline.withValues(alpha: 0.1),
+                ),
               ),
-              boxShadow: [
+              shadows: [
                 BoxShadow(
                   color: colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
@@ -360,18 +391,28 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                           Container(
                             width: 36,
                             height: 36,
-                            decoration: BoxDecoration(
+                            decoration: ShapeDecoration(
                               color: colorScheme.surface,
-                              borderRadius: BorderRadius.circular(12),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 12,
+                                  cornerSmoothing: 0.6,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
                           Container(
                             width: 120,
                             height: 20,
-                            decoration: BoxDecoration(
+                            decoration: ShapeDecoration(
                               color: colorScheme.surface,
-                              borderRadius: BorderRadius.circular(10),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 10,
+                                  cornerSmoothing: 0.6,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -379,9 +420,14 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                       Container(
                         width: 80,
                         height: 24,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -393,18 +439,28 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
                   Container(
                     width: 200,
                     height: 32,
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(8),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 8,
+                          cornerSmoothing: 0.6,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Container(
                     width: 140,
                     height: 16,
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(8),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 8,
+                          cornerSmoothing: 0.6,
+                        ),
+                      ),
                     ),
                   ),
 
@@ -432,10 +488,15 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
   Widget _buildShimmerStatItem(AppColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.05)),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 14,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.05)),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -443,27 +504,42 @@ class _DashboardSummaryCardState extends State<DashboardSummaryCard>
           Container(
             width: 32,
             height: 32,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(10),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 6),
           Container(
             width: 50,
             height: 14,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(7),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 7,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 4),
           Container(
             width: 40,
             height: 12,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(6),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 6,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
         ],

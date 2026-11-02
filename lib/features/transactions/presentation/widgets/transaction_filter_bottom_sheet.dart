@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -83,9 +84,13 @@ class _TransactionFilterBottomSheetState
       builder: (popupContext) {
         return Container(
           height: 300,
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.vertical(
+                top: SmoothRadius(cornerRadius: 20, cornerSmoothing: 0.6),
+              ),
+            ),
           ),
           child: SafeArea(
             top: false,
@@ -145,9 +150,13 @@ class _TransactionFilterBottomSheetState
     final colorScheme = context.colorScheme;
     return Container(
       height: MediaQuery.sizeOf(context).height * 0.85,
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 24, cornerSmoothing: 0.6),
+          ),
+        ),
       ),
       child: Column(
         children: [
@@ -156,9 +165,14 @@ class _TransactionFilterBottomSheetState
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             height: 4,
             width: 40,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 2,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
 
@@ -257,7 +271,10 @@ class _TransactionFilterBottomSheetState
                   child: CupertinoButton(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 16,
+                      cornerSmoothing: 0.6,
+                    ),
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       'Cancel',
@@ -272,7 +289,10 @@ class _TransactionFilterBottomSheetState
                 Expanded(
                   child: CupertinoButton.filled(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 16,
+                      cornerSmoothing: 0.6,
+                    ),
                     onPressed: () {
                       // Parse amount filters
                       final minAmount = double.tryParse(
@@ -386,10 +406,15 @@ class _TransactionFilterBottomSheetState
                       vertical: 12,
                       horizontal: 14,
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: colorScheme.outline.withValues(alpha: 0.4),
+                    decoration: ShapeDecoration(
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 0.6,
+                        ),
+                        side: BorderSide(
+                          color: colorScheme.outline.withValues(alpha: 0.4),
+                        ),
                       ),
                     ),
                     child: Row(
@@ -450,10 +475,15 @@ class _TransactionFilterBottomSheetState
                       vertical: 12,
                       horizontal: 14,
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: colorScheme.outline.withValues(alpha: 0.4),
+                    decoration: ShapeDecoration(
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 0.6,
+                        ),
+                        side: BorderSide(
+                          color: colorScheme.outline.withValues(alpha: 0.4),
+                        ),
                       ),
                     ),
                     child: Row(
@@ -591,7 +621,10 @@ class _TransactionFilterBottomSheetState
                 : null,
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 12,
+                cornerSmoothing: 0.6,
+              ),
               border: Border.all(
                 color: colorScheme.outline.withValues(alpha: 0.4),
               ),
@@ -647,7 +680,10 @@ class _TransactionFilterBottomSheetState
                 : null,
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 12,
+                cornerSmoothing: 0.6,
+              ),
               border: Border.all(
                 color: colorScheme.outline.withValues(alpha: 0.4),
               ),
@@ -858,16 +894,21 @@ class _CupertinoFilterChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: selected
               ? colorScheme.primaryContainer
               : colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected
-                ? colorScheme.primary
-                : colorScheme.outline.withValues(alpha: 0.3),
-            width: selected ? 1.5 : 1,
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 12,
+              cornerSmoothing: 0.6,
+            ),
+            side: BorderSide(
+              color: selected
+                  ? colorScheme.primary
+                  : colorScheme.outline.withValues(alpha: 0.3),
+              width: selected ? 1.5 : 1,
+            ),
           ),
         ),
         child: Row(

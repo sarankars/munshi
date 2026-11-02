@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:munshi/core/theme.dart';
 
@@ -67,13 +68,18 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
         padding: const EdgeInsets.all(20),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 350, maxHeight: 500),
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.2),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 20,
+                cornerSmoothing: 0.6,
+              ),
+              side: BorderSide(
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
             ),
-            boxShadow: [
+            shadows: [
               BoxShadow(
                 color: colorScheme.shadow.withValues(alpha: 0.2),
                 blurRadius: 24,
@@ -119,12 +125,17 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                 padding: const EdgeInsets.all(16),
                 child: Container(
                   height: 60,
-                  decoration: BoxDecoration(
+                  decoration: ShapeDecoration(
                     color: _selectedColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: colorScheme.outline.withValues(alpha: 0.2),
-                      width: 2,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 0.6,
+                      ),
+                      side: BorderSide(
+                        color: colorScheme.outline.withValues(alpha: 0.2),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -204,6 +215,10 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
                     ),
                     const SizedBox(width: 8),
                     CupertinoButton.filled(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 0.6,
+                      ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 10,

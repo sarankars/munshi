@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -70,9 +71,13 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
       builder: (popupContext) {
         return Container(
           height: 300,
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.vertical(
+                top: SmoothRadius(cornerRadius: 20, cornerSmoothing: 0.6),
+              ),
+            ),
           ),
           child: SafeArea(
             top: false,
@@ -259,7 +264,10 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                     ),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 0.6,
+                      ),
                       border: Border.all(
                         color: _amountError != null
                             ? colorScheme.error
@@ -319,7 +327,10 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                     ),
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 0.6,
+                      ),
                       border: Border.all(
                         color: _noteError != null
                             ? colorScheme.error
@@ -392,11 +403,16 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                         horizontal: 14,
                         vertical: 14,
                       ),
-                      decoration: BoxDecoration(
+                      decoration: ShapeDecoration(
                         color: colorScheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: colorScheme.outline.withValues(alpha: 0.3),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 12,
+                            cornerSmoothing: 0.6,
+                          ),
+                          side: BorderSide(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
+                          ),
                         ),
                       ),
                       child: Row(
@@ -435,7 +451,10 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
               right: 20,
               bottom: MediaQuery.paddingOf(context).bottom + 20,
               child: CupertinoButton.filled(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 16,
+                  cornerSmoothing: 0.6,
+                ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 14,

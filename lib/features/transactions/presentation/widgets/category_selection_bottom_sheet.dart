@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
@@ -31,10 +32,14 @@ class _CategorySelectionBottomSheetState
     final colorScheme = context.colorScheme;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 24, cornerSmoothing: 0.6),
+          ),
+        ),
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.15),
             blurRadius: 20,
@@ -52,9 +57,14 @@ class _CategorySelectionBottomSheetState
               margin: const EdgeInsets.only(top: 12, bottom: 8),
               height: 4,
               width: 40,
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 2,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
             ),
 
@@ -120,27 +130,37 @@ class _CategorySelectionBottomSheetState
                           horizontal: 16,
                           vertical: 12,
                         ),
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: isSelected
                               ? colorScheme.primaryContainer.withValues(
                                   alpha: 0.5,
                                 )
                               : colorScheme.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(16),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 16,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                         child: Row(
                           children: [
                             // Category Icon
                             Container(
                               padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: category.displayColor.withValues(
                                   alpha: 0.12,
                                 ),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: category.displayColor.withValues(
-                                    alpha: 0.3,
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
+                                  ),
+                                  side: BorderSide(
+                                    color: category.displayColor.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
                               ),
