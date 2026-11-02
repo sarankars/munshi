@@ -1,17 +1,28 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:munshi/core/database/app_database.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/categories/widgets/color_picker_dialog.dart';
 import 'package:munshi/features/categories/widgets/icon_picker_dialog.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/transaction_category_input.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
+import 'package:munshi/widgets/cupertino_toast.dart';
 import 'package:provider/provider.dart';
 
+/// A dialog widget for creating a new category or editing an existing one.
 class AddEditCategoryDialog extends StatefulWidget {
+  /// Creates an [AddEditCategoryDialog] for the given [type].
+  ///
+  /// Supply [category] to pre-populate fields when editing.
   const AddEditCategoryDialog({required this.type, super.key, this.category});
 
+  /// The transaction type this category belongs to.
   final TransactionType type;
+
+  /// The existing category to edit, or `null` when creating a new one.
   final TransactionCategory? category;
 
   @override
@@ -19,23 +30,23 @@ class AddEditCategoryDialog extends StatefulWidget {
 }
 
 class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 
   late IconData _selectedIcon;
   late Color _selectedColor;
   bool _isLoading = false;
+  String? _nameError;
 
   @override
   void initState() {
     super.initState();
     if (widget.category != null) {
       _nameController.text = widget.category!.name;
-      _selectedIcon = widget.category!.icon;
-      _selectedColor = widget.category!.color;
+      _selectedIcon = widget.category!.displayIcon;
+      _selectedColor = widget.category!.displayColor;
     } else {
       _selectedIcon = Iconsax.category_outline;
-      _selectedColor = Colors.blue;
+      _selectedColor = CupertinoColors.systemBlue;
     }
   }
 
@@ -46,8 +57,9 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
   }
 
   Future<void> _selectIcon() async {
-    final icon = await showDialog<IconData>(
+    final icon = await showCupertinoDialog<IconData>(
       context: context,
+      barrierDismissible: true,
       builder: (context) => IconPickerDialog(selectedIcon: _selectedIcon),
     );
     if (icon != null) {
@@ -58,8 +70,9 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
   }
 
   Future<void> _selectColor() async {
-    final color = await showDialog<Color>(
+    final color = await showCupertinoDialog<Color>(
       context: context,
+      barrierDismissible: true,
       builder: (context) => ColorPickerDialog(selectedColor: _selectedColor),
     );
     if (color != null) {
@@ -70,12 +83,18 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
   }
 
   Future<void> _saveCategory() async {
-    if (!_formKey.currentState!.validate()) return;
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      setState(() => _nameError = 'Please enter a category name');
+      return;
+    }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _nameError = null;
+      _isLoading = true;
+    });
 
     final provider = context.read<CategoryProvider>();
-    final name = _nameController.text.trim();
 
     // Check if name already exists
     final nameExists = await provider.categoryNameExists(
@@ -85,13 +104,10 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
     );
 
     if (nameExists && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('A category with this name already exists'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      setState(() => _isLoading = false);
+      setState(() {
+        _nameError = 'A category with this name already exists';
+        _isLoading = false;
+      });
       return;
     }
 
@@ -100,16 +116,16 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
         // Update existing category
         final updatedCategory = widget.category!.copyWith(
           name: name,
-          icon: _selectedIcon,
-          color: _selectedColor,
+          icon: _selectedIcon.toCategoryIconSpec(),
+          colorArgb: _selectedColor.toARGB32(),
         );
         await provider.updateCategory(updatedCategory);
       } else {
         // Add new category
-        final newCategory = TransactionCategoriesCompanion.insert(
+        final newCategory = TransactionCategoryInput(
           name: name,
-          icon: _selectedIcon,
-          color: _selectedColor,
+          icon: _selectedIcon.toCategoryIconSpec(),
+          colorArgb: _selectedColor.toARGB32(),
           type: widget.type,
         );
         await provider.addCategory(newCategory);
@@ -118,14 +134,9 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
       if (mounted) {
         Navigator.of(context).pop(true);
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving category: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        showCupertinoToast(context, 'Error saving category: $e', isError: true);
       }
     } finally {
       if (mounted) {
@@ -136,86 +147,156 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = context.colorScheme;
     final isEditing = widget.category != null;
 
-    return Dialog(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 400),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      isEditing ? 'Edit Category' : 'Add Category',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Iconsax.close_circle_outline),
-                  ),
-                ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: ShapeDecoration(
+            color: colorScheme.surface,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 20,
+                cornerSmoothing: 0.6,
+              ),
+              side: BorderSide(
+                color: colorScheme.outline.withValues(alpha: 0.2),
               ),
             ),
-            const Divider(height: 1),
+            shadows: [
+              BoxShadow(
+                color: colorScheme.shadow.withValues(alpha: 0.2),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        isEditing ? 'Edit Category' : 'Add Category',
+                        style: context.textTheme.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Icon(
+                        Iconsax.close_circle_outline,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 1,
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
 
-            // Form
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
+              // Form
+              Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Category name
-                    TextFormField(
+                    CupertinoTextField(
                       controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Category Name',
-                        hintText: 'Enter category name',
-                        prefixIcon: const Icon(Iconsax.text_outline),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                      placeholder: 'Enter category name',
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 14,
+                      ),
+                      prefix: Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Icon(
+                          Iconsax.text_outline,
+                          size: 20,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a category name';
+                      style: context.textTheme.bodyLarge.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
+                      placeholderStyle: context.textTheme.bodyLarge.copyWith(
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.6,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerLow,
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 0.6,
+                        ),
+                        border: Border.all(
+                          color: _nameError != null
+                              ? colorScheme.error
+                              : colorScheme.outline.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      onChanged: (_) {
+                        if (_nameError != null) {
+                          setState(() => _nameError = null);
                         }
-                        return null;
                       },
                     ),
+                    if (_nameError != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        _nameError!,
+                        style: context.textTheme.bodySmall.copyWith(
+                          color: colorScheme.error,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 16),
 
                     // Icon selector
-                    InkWell(
-                      onTap: _selectIcon,
-                      borderRadius: BorderRadius.circular(12),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: _selectIcon,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.5),
+                        decoration: ShapeDecoration(
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.4),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
                             Container(
                               width: 48,
                               height: 48,
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: _selectedColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
+                                  ),
+                                ),
                               ),
                               child: Icon(_selectedIcon, color: _selectedColor),
                             ),
@@ -223,10 +304,14 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                             Expanded(
                               child: Text(
                                 'Select Icon',
-                                style: theme.textTheme.bodyLarge,
+                                style: context.textTheme.bodyLarge,
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios, size: 16),
+                            Icon(
+                              CupertinoIcons.chevron_right,
+                              size: 16,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ],
                         ),
                       ),
@@ -234,30 +319,41 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                     const SizedBox(height: 16),
 
                     // Color selector
-                    InkWell(
-                      onTap: _selectColor,
-                      borderRadius: BorderRadius.circular(12),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: _selectColor,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.5),
+                        decoration: ShapeDecoration(
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.4),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
                             Container(
                               width: 48,
                               height: 48,
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: _selectedColor,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: colorScheme.outline.withValues(
-                                    alpha: 0.2,
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
                                   ),
-                                  width: 2,
+                                  side: BorderSide(
+                                    color: colorScheme.outline.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                             ),
@@ -265,10 +361,14 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                             Expanded(
                               child: Text(
                                 'Select Color',
-                                style: theme.textTheme.bodyLarge,
+                                style: context.textTheme.bodyLarge,
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios, size: 16),
+                            Icon(
+                              CupertinoIcons.chevron_right,
+                              size: 16,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ],
                         ),
                       ),
@@ -279,20 +379,30 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(
+                        CupertinoButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           onPressed: () => Navigator.of(context).pop(),
                           child: const Text('Cancel'),
                         ),
                         const SizedBox(width: 8),
-                        ElevatedButton(
+                        CupertinoButton.filled(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 12,
+                            cornerSmoothing: 0.6,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
                           onPressed: _isLoading ? null : _saveCategory,
                           child: _isLoading
                               ? const SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
+                                  child: CupertinoActivityIndicator(),
                                 )
                               : Text(isEditing ? 'Update' : 'Add'),
                         ),
@@ -301,8 +411,8 @@ class _AddEditCategoryDialogState extends State<AddEditCategoryDialog> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

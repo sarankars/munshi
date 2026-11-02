@@ -1,47 +1,36 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/categories/widgets/add_edit_category_dialog.dart';
 import 'package:munshi/features/categories/widgets/category_list_tile.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/widgets/cupertino_toast.dart';
 import 'package:provider/provider.dart';
 
+/// Screen that lists expense and income categories and allows the user to
+/// add, edit, or delete them.
 class CategoriesScreen extends StatefulWidget {
+  /// Creates a [CategoriesScreen].
   const CategoriesScreen({super.key});
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _CategoriesScreenState extends State<CategoriesScreen> {
+  TransactionType _selectedType = TransactionType.expense;
 
   Future<void> _showAddCategoryDialog(TransactionType type) async {
-    final result = await showDialog<bool>(
+    final result = await showCupertinoDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (context) => AddEditCategoryDialog(type: type),
     );
     if (mounted && (result ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Category added successfully'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showCupertinoToast(context, 'Category added successfully');
     }
   }
 
@@ -49,40 +38,34 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     TransactionCategory category,
     TransactionType type,
   ) async {
-    final result = await showDialog<bool>(
+    final result = await showCupertinoDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (context) =>
           AddEditCategoryDialog(type: type, category: category),
     );
     if (mounted && (result ?? false)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Category updated successfully'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showCupertinoToast(context, 'Category updated successfully');
     }
   }
 
   Future<void> _deleteCategory(int categoryId, String categoryName) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showCupertinoDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => CupertinoAlertDialog(
         title: const Text('Delete Category'),
         content: Text(
-          'Are you sure you want to delete "$categoryName"? This action cannot be undone.',
+          'Are you sure you want to delete "$categoryName"? '
+          'This action cannot be undone.',
         ),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancel'),
           ),
-          ElevatedButton(
+          CupertinoDialogAction(
+            isDestructiveAction: true,
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
             child: const Text('Delete'),
           ),
         ],
@@ -93,21 +76,14 @@ class _CategoriesScreenState extends State<CategoriesScreen>
       try {
         await context.read<CategoryProvider>().deleteCategory(categoryId);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Category deleted successfully'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          showCupertinoToast(context, 'Category deleted successfully');
         }
-      } catch (e) {
+      } on Object catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error deleting category: $e'),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
+          showCupertinoToast(
+            context,
+            'Error deleting category: $e',
+            isError: true,
           );
         }
       }
@@ -116,48 +92,124 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Categories'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(icon: Icon(Iconsax.minus_cirlce_outline), text: 'Expense'),
-            Tab(icon: Icon(Iconsax.add_circle_outline), text: 'Income'),
+    final colorScheme = context.colorScheme;
+
+    return CupertinoPageScaffold(
+      backgroundColor: colorScheme.surface,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: colorScheme.surface.withValues(alpha: 0.9),
+        border: null,
+        middle: Text(
+          'Categories',
+          style: context.textTheme.headlineSmall.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => _showAddCategoryDialog(_selectedType),
+          child: Icon(
+            Iconsax.add_outline,
+            color: colorScheme.primary,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: SizedBox(
+                width: double.infinity,
+                child: CupertinoSlidingSegmentedControl<TransactionType>(
+                  groupValue: _selectedType,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
+                  thumbColor: colorScheme.surface,
+                  onValueChanged: (value) {
+                    if (value != null) {
+                      setState(() => _selectedType = value);
+                    }
+                  },
+                  children: {
+                    TransactionType.expense: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 12,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Iconsax.minus_cirlce_outline,
+                            size: 18,
+                            color: _selectedType == TransactionType.expense
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Expense',
+                            style: context.textTheme.bodyMedium.copyWith(
+                              fontWeight:
+                                  _selectedType == TransactionType.expense
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: _selectedType == TransactionType.expense
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TransactionType.income: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 12,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Iconsax.add_circle_outline,
+                            size: 18,
+                            color: _selectedType == TransactionType.income
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Income',
+                            style: context.textTheme.bodyMedium.copyWith(
+                              fontWeight:
+                                  _selectedType == TransactionType.income
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: _selectedType == TransactionType.income
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: _CategoryList(
+                type: _selectedType,
+                onEdit: (category) =>
+                    _showEditCategoryDialog(category, _selectedType),
+                onDelete: (category) =>
+                    _deleteCategory(category.id, category.name),
+              ),
+            ),
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              final type = _tabController.index == 0
-                  ? TransactionType.expense
-                  : TransactionType.income;
-              _showAddCategoryDialog(type);
-            },
-            icon: const Icon(Iconsax.add_outline),
-          ),
-        ],
-      ),
-
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Expense categories
-          _CategoryList(
-            type: TransactionType.expense,
-            onEdit: (TransactionCategory category) =>
-                _showEditCategoryDialog(category, TransactionType.expense),
-            onDelete: (TransactionCategory category) =>
-                _deleteCategory(category.id, category.name),
-          ),
-          // Income categories
-          _CategoryList(
-            type: TransactionType.income,
-            onEdit: (category) =>
-                _showEditCategoryDialog(category, TransactionType.income),
-            onDelete: (category) => _deleteCategory(category.id, category.name),
-          ),
-        ],
       ),
     );
   }
@@ -176,13 +228,17 @@ class _CategoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Consumer<CategoryProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: CupertinoActivityIndicator(
+              color: colorScheme.primary,
+              radius: 14,
+            ),
+          );
         }
 
         final categories = type == TransactionType.expense
@@ -194,22 +250,36 @@ class _CategoryList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Iconsax.category_outline,
-                  size: 64,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: ShapeDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
+                    ),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 24,
+                        cornerSmoothing: 0.6,
+                      ),
+                    ),
+                  ),
+                  child: Icon(
+                    Iconsax.category_outline,
+                    size: 48,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'No categories yet',
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  style: context.textTheme.titleLarge.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Tap the button below to add your first category',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  'Tap the + button above to add your first category',
+                  style: context.textTheme.bodyMedium.copyWith(
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
@@ -220,7 +290,8 @@ class _CategoryList extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];

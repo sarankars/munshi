@@ -1,9 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 
+/// A bottom sheet for selecting a transaction category.
 class CategorySelectionBottomSheet extends StatefulWidget {
+  /// Creates a [CategorySelectionBottomSheet].
   const CategorySelectionBottomSheet({
     required this.categories,
     required this.currentCategoryId,
@@ -12,9 +17,16 @@ class CategorySelectionBottomSheet extends StatefulWidget {
     super.key,
   });
 
+  /// The list of categories to choose from.
   final List<TransactionCategory> categories;
+
+  /// The ID of the currently selected category, or `null` if none.
   final int? currentCategoryId;
+
+  /// The transaction type used to filter/display categories.
   final TransactionType transactionType;
+
+  /// Called when the user selects a category.
   final void Function(TransactionCategory) onCategorySelected;
 
   @override
@@ -26,13 +38,17 @@ class _CategorySelectionBottomSheetState
     extends State<CategorySelectionBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 24, cornerSmoothing: 0.6),
+          ),
+        ),
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.15),
             blurRadius: 20,
@@ -40,94 +56,126 @@ class _CategorySelectionBottomSheetState
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Drag Handle
-          Container(
-            margin: const EdgeInsets.only(top: 12, bottom: 8),
-            height: 4,
-            width: 40,
-            decoration: BoxDecoration(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-
-          // Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 10, 16),
-            child: Row(
-              children: [
-                Icon(
-                  Iconsax.category_outline,
-                  color: colorScheme.primary,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Select Category',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Drag Handle
+            Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              height: 4,
+              width: 40,
+              decoration: ShapeDecoration(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 2,
+                    cornerSmoothing: 0.6,
                   ),
                 ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Iconsax.close_circle_outline),
-                  tooltip: 'Close',
-                ),
-              ],
+              ),
             ),
-          ),
 
-          const Divider(height: 1),
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
+              child: Row(
+                children: [
+                  Icon(
+                    Iconsax.category_outline,
+                    color: colorScheme.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Select Category',
+                      style: context.textTheme.titleLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () => Navigator.pop(context),
+                    child: Icon(
+                      Iconsax.close_circle_outline,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-          // Categories List
-          Flexible(
-            child: ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              itemCount: widget.categories.length,
-              itemBuilder: (context, index) {
-                final category = widget.categories[index];
-                final isSelected = widget.currentCategoryId == category.id;
+            Container(
+              height: 1,
+              color: colorScheme.outline.withValues(alpha: 0.2),
+            ),
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Material(
-                    color: isSelected
-                        ? colorScheme.primaryContainer.withValues(alpha: 0.5)
-                        : colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
+            // Categories List
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                itemCount: widget.categories.length,
+                itemBuilder: (context, index) {
+                  final category = widget.categories[index];
+                  final isSelected = widget.currentCategoryId == category.id;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: () {
                         widget.onCategorySelected(category);
                         Navigator.pop(context);
                       },
-                      child: Padding(
+                      child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,
+                        ),
+                        decoration: ShapeDecoration(
+                          color: isSelected
+                              ? colorScheme.primaryContainer.withValues(
+                                  alpha: 0.5,
+                                )
+                              : colorScheme.surfaceContainerLow,
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 16,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                         child: Row(
                           children: [
                             // Category Icon
                             Container(
                               padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: category.color.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: category.color.withValues(alpha: 0.3),
+                              decoration: ShapeDecoration(
+                                color: category.displayColor.withValues(
+                                  alpha: 0.12,
+                                ),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 0.6,
+                                  ),
+                                  side: BorderSide(
+                                    color: category.displayColor.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                  ),
                                 ),
                               ),
                               child: Icon(
-                                category.icon,
-                                color: category.color,
+                                category.displayIcon,
+                                color: category.displayColor,
                                 size: 22,
                               ),
                             ),
@@ -136,13 +184,12 @@ class _CategorySelectionBottomSheetState
                             Expanded(
                               child: Text(
                                 category.name,
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
-                                      fontWeight: isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.w500,
-                                      color: colorScheme.onSurface,
-                                    ),
+                                style: context.textTheme.bodyLarge.copyWith(
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w500,
+                                  color: colorScheme.onSurface,
+                                ),
                               ),
                             ),
                             // Selection Indicator
@@ -156,12 +203,12 @@ class _CategorySelectionBottomSheetState
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

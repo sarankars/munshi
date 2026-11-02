@@ -1,21 +1,27 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:munshi/core/models/period_type.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/settings/screens/currency_selection_screen.dart';
 import 'package:munshi/features/settings/widgets/app_version_widget.dart';
 import 'package:munshi/providers/currency_provider.dart';
 import 'package:munshi/providers/period_provider.dart';
 import 'package:munshi/providers/theme_provider.dart';
+import 'package:munshi/widgets/cupertino_toast.dart';
 import 'package:munshi/widgets/rounded_dropdown.dart';
 import 'package:munshi/widgets/webview_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Screen that presents all user-configurable app settings.
 class SettingsScreen extends StatefulWidget {
+  /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
 
   @override
@@ -42,7 +48,8 @@ class _SettingsScreenState extends State<SettingsScreen>
 
     // Create staggered animations for each section
     _itemAnimations = List<Animation<Offset>>.generate(
-      6, // Number of animated sections (Preferences, Notifications, Security, Support, Logout, Footer)
+      // Preferences, Notifications, Security, Support, Logout, Footer
+      6,
       (int index) =>
           Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
             CurvedAnimation(
@@ -122,14 +129,9 @@ Best regards,
       );
       await launchUrl(emailUri);
       return;
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        showCupertinoToast(context, 'Error: $e', isError: true);
       }
     }
   }
@@ -193,36 +195,31 @@ Best regards,
 
       await launchUrl(emailUri);
       return;
-    } catch (e) {
+    } on Object catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        showCupertinoToast(context, 'Error: $e', isError: true);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Settings',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
-        ),
-      ),
-      body: CustomScrollView(
+    return CupertinoPageScaffold(
+      backgroundColor: colorScheme.surface,
+      child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
+          CupertinoSliverNavigationBar(
+            transitionBetweenRoutes: false,
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.9),
+            border: null,
+            largeTitle: Text(
+              'Settings',
+              style: TextStyle(color: colorScheme.onSurface),
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
             sliver: SliverList(
@@ -244,16 +241,17 @@ Best regards,
                               subtitle:
                                   currencyProvider.selectedCurrency.displayName,
                               onTap: () {
-                                HapticFeedback.lightImpact();
+                                unawaited(HapticFeedback.lightImpact());
                                 Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
+                                  CupertinoPageRoute<void>(
                                     builder: (_) =>
                                         const CurrencySelectionScreen(),
                                   ),
                                 );
                               },
                               trailing: Icon(
-                                Icons.chevron_right,
+                                CupertinoIcons.chevron_right,
+                                size: 18,
                                 color: colorScheme.onSurface.withValues(
                                   alpha: 0.4,
                                 ),
@@ -267,26 +265,25 @@ Best regards,
                           trailing: Consumer<PeriodProvider>(
                             builder: (context, periodProvider, child) {
                               return RoundedDropdown<String>(
+                                title: 'Preferred Dashboard View',
                                 value: periodProvider.defaultPeriodDisplayName,
                                 onChanged: (String? value) {
                                   if (value != null) {
                                     periodProvider
                                         .setDefaultPeriodByDisplayName(value);
-                                    HapticFeedback.lightImpact();
+                                    unawaited(HapticFeedback.lightImpact());
                                   }
                                 },
                                 items: PeriodType.values
-                                    .map<DropdownMenuItem<String>>((
+                                    .map<RoundedDropdownItem<String>>((
                                       PeriodType option,
                                     ) {
-                                      return DropdownMenuItem<String>(
+                                      return RoundedDropdownItem<String>(
                                         value: option.displayName,
                                         child: Text(
                                           option.displayName,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
+                                          style: context.textTheme.bodyMedium
+                                              .copyWith(
                                                 color: colorScheme.primary,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -305,31 +302,31 @@ Best regards,
                           trailing: Consumer<ThemeProvider>(
                             builder: (context, themeProvider, child) {
                               return RoundedDropdown<String>(
+                                title: 'Select Theme',
                                 value: themeProvider.themeModeString,
                                 onChanged: (String? value) {
                                   if (value != null) {
                                     themeProvider.setThemeMode(value);
-                                    HapticFeedback.lightImpact();
+                                    unawaited(HapticFeedback.lightImpact());
                                   }
                                 },
                                 icon: Icon(
-                                  Icons.keyboard_arrow_down,
+                                  CupertinoIcons.chevron_down,
+                                  size: 14,
                                   color: colorScheme.onSurface.withValues(
                                     alpha: 0.6,
                                   ),
                                 ),
                                 items: _themeOptions
-                                    .map<DropdownMenuItem<String>>((
+                                    .map<RoundedDropdownItem<String>>((
                                       String option,
                                     ) {
-                                      return DropdownMenuItem<String>(
+                                      return RoundedDropdownItem<String>(
                                         value: option,
                                         child: Text(
                                           option,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
+                                          style: context.textTheme.bodyMedium
+                                              .copyWith(
                                                 color: colorScheme.primary,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -360,13 +357,13 @@ Best regards,
                         _SettingsTile(
                           title: 'Daily Report',
                           subtitle: 'Receive daily expense summary',
-                          trailing: Switch(
+                          trailing: CupertinoSwitch(
                             value: _dailyReport,
                             onChanged: (bool value) {
                               setState(() => _dailyReport = value);
-                              HapticFeedback.lightImpact();
+                              unawaited(HapticFeedback.lightImpact());
                             },
-                            activeThumbColor: colorScheme.primary,
+                            activeTrackColor: colorScheme.primary,
                           ),
                         ),
                       ],
@@ -389,7 +386,7 @@ Best regards,
                           title: 'Privacy Policy & Terms',
                           subtitle: 'Read our privacy policy',
                           onTap: () {
-                            HapticFeedback.lightImpact();
+                            unawaited(HapticFeedback.lightImpact());
                             // Navigate to privacy policy
                             const privacyPolicyUrl = String.fromEnvironment(
                               'PRIVACY_POLICY_URL',
@@ -397,7 +394,7 @@ Best regards,
                                   'https://munshi.sarankar.com/privacy.html',
                             );
                             Navigator.of(context).push(
-                              MaterialPageRoute<void>(
+                              CupertinoPageRoute<void>(
                                 builder: (context) => const WebViewScreen(
                                   url: privacyPolicyUrl,
                                   title: 'Privacy Policy',
@@ -406,7 +403,8 @@ Best regards,
                             );
                           },
                           trailing: Icon(
-                            Icons.chevron_right,
+                            CupertinoIcons.chevron_right,
+                            size: 18,
                             color: colorScheme.onSurface.withValues(alpha: 0.4),
                           ),
                         ),
@@ -430,7 +428,7 @@ Best regards,
                           title: 'Help & FAQ',
                           subtitle: 'Get help and find answers',
                           onTap: () {
-                            HapticFeedback.lightImpact();
+                            unawaited(HapticFeedback.lightImpact());
                             // Navigate to FAQ
                             const faqUrl = String.fromEnvironment(
                               'FAQ_URL',
@@ -438,7 +436,7 @@ Best regards,
                                   'https://munshi.sarankar.com/faq.html',
                             );
                             Navigator.of(context).push(
-                              MaterialPageRoute<void>(
+                              CupertinoPageRoute<void>(
                                 builder: (context) => const WebViewScreen(
                                   url: faqUrl,
                                   title: 'FAQ',
@@ -447,7 +445,8 @@ Best regards,
                             );
                           },
                           trailing: Icon(
-                            Icons.chevron_right_rounded,
+                            CupertinoIcons.chevron_right,
+                            size: 18,
                             color: colorScheme.onSurface.withValues(alpha: 0.4),
                           ),
                         ),
@@ -455,11 +454,12 @@ Best regards,
                           title: 'Report a Bug',
                           subtitle: 'Let us know about issues',
                           onTap: () {
-                            HapticFeedback.lightImpact();
-                            _reportBug();
+                            unawaited(HapticFeedback.lightImpact());
+                            unawaited(_reportBug());
                           },
                           trailing: Icon(
-                            Icons.chevron_right_rounded,
+                            CupertinoIcons.chevron_right,
+                            size: 18,
                             color: colorScheme.onSurface.withValues(alpha: 0.4),
                           ),
                         ),
@@ -467,11 +467,12 @@ Best regards,
                           title: 'Feedback',
                           subtitle: 'Share your thoughts',
                           onTap: () {
-                            HapticFeedback.lightImpact();
-                            _sendFeedback();
+                            unawaited(HapticFeedback.lightImpact());
+                            unawaited(_sendFeedback());
                           },
                           trailing: Icon(
-                            Icons.chevron_right_rounded,
+                            CupertinoIcons.chevron_right,
+                            size: 18,
                             color: colorScheme.onSurface.withValues(alpha: 0.4),
                           ),
                         ),
@@ -498,7 +499,7 @@ Best regards,
   }
 
   Widget _buildSettingsSection({
-    required ColorScheme colorScheme,
+    required AppColorScheme colorScheme,
     required String title,
     required IconData icon,
     required List<Widget> tiles,
@@ -510,9 +511,14 @@ Best regards,
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(10),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
               ),
               child: Icon(
                 icon,
@@ -523,7 +529,7 @@ Best regards,
             const SizedBox(width: 8),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: context.textTheme.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
               ),
@@ -531,17 +537,20 @@ Best regards,
           ],
         ),
         const SizedBox(height: 8),
-        Card(
-          clipBehavior: Clip.hardEdge,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-            side: BorderSide(
-              color: colorScheme.outline.withValues(alpha: 0.2),
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(
+            color: colorScheme.surface,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 15,
+                cornerSmoothing: 0.6,
+              ),
+              side: BorderSide(
+                color: colorScheme.outline.withValues(alpha: 0.2),
+              ),
             ),
           ),
-          color: colorScheme.surface,
-          margin: EdgeInsets.zero,
           child: Column(
             children: List<Widget>.generate(tiles.length, (index) {
               final tile = tiles[index];
@@ -563,17 +572,22 @@ Best regards,
     );
   }
 
-  Widget _buildFooter(ColorScheme colorScheme) {
+  Widget _buildFooter(AppColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 20,
+            cornerSmoothing: 0.6,
+          ),
+        ),
       ),
       child: Column(
         children: [
           AppVersionWidget(
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
@@ -584,14 +598,14 @@ Best regards,
             children: [
               Text(
                 'Made with ',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: context.textTheme.bodyMedium.copyWith(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
-              Text('❤️', style: Theme.of(context).textTheme.bodyMedium),
+              Text('❤️', style: context.textTheme.bodyMedium),
               Text(
                 ' in India',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: context.textTheme.bodyMedium.copyWith(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
@@ -620,27 +634,58 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: ListTile(
-              title: Text(title),
-              subtitle: subtitle == null ? null : Text(subtitle!),
-              trailing: trailing,
-              contentPadding: EdgeInsets.zero,
-              minVerticalPadding: 12,
-              visualDensity: VisualDensity.compact,
+    final colorScheme = context.colorScheme;
+    final rowContent = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: context.textTheme.bodyLarge.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle!,
+                    style: context.textTheme.bodySmall.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-        ),
+          if (trailing != null) ...[
+            const SizedBox(width: 12),
+            trailing!,
+          ],
+        ],
+      ),
+    );
+
+    return Column(
+      children: [
+        if (onTap != null)
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            minimumSize: Size.zero,
+            onPressed: onTap,
+            child: rowContent,
+          )
+        else
+          rowContent,
         if (hasDivider)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Divider(
+            child: Container(
               color: colorScheme.outline.withValues(alpha: 0.2),
               height: 1,
             ),

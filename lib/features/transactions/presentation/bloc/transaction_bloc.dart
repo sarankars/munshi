@@ -134,7 +134,8 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  /// Resets pagination and loads the first page using [state.currentFilter].
+  /// Resets pagination and loads the first page using
+  /// [TransactionState.currentFilter].
   ///
   /// Always clears [TransactionState.isLoadingMore] so an in-flight next-page
   /// request cannot leave the indicator stuck after a refresh, filter change,
@@ -175,7 +176,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     }
   }
 
-  /// Appends the next page to [state.transactions].
+  /// Appends the next page to [TransactionState.transactions].
   ///
   /// No-op when [TransactionState.isLoadingMore] is `true` or
   /// [TransactionState.hasMore] is `false`.

@@ -3,8 +3,10 @@ import 'package:munshi/core/database/app_database.dart';
 import 'package:munshi/core/database/tables/transaction_categories.dart';
 import 'package:munshi/core/database/tables/transactions.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
+import 'package:munshi/features/transactions/data/codecs/category_icon_spec_codec.dart';
 import 'package:munshi/features/transactions/data/extensions/transaction_category_extensions.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/transaction_category_input.dart';
 
 part 'category_local_datasource.g.dart';
 
@@ -15,6 +17,7 @@ part 'category_local_datasource.g.dart';
 @DriftAccessor(tables: [TransactionCategories, Transactions])
 class CategoryLocalDataSource extends DatabaseAccessor<AppDatabase>
     with _$CategoryLocalDataSourceMixin {
+  /// Creates a [CategoryLocalDataSource] attached to [attachedDatabase].
   CategoryLocalDataSource(super.attachedDatabase);
 
   /// Retrieves all transaction categories from the database.
@@ -50,8 +53,17 @@ class CategoryLocalDataSource extends DatabaseAccessor<AppDatabase>
   }
 
   /// Inserts a new transaction category into the database.
-  Future<int> insertCategory(TransactionCategoriesCompanion category) =>
-      into(transactionCategories).insert(category);
+  Future<int> insertCategory(TransactionCategoryInput category) {
+    return into(transactionCategories).insert(
+      TransactionCategoriesCompanion.insert(
+        name: category.name,
+        icon: CategoryIconSpecCodec.encode(category.icon),
+        color: category.colorArgb,
+        type: category.type,
+        isDefault: Value(category.isDefault),
+      ),
+    );
+  }
 
   /// Updates an existing transaction [category] in the database.
   Future<bool> updateCategory(TransactionCategory category) async {

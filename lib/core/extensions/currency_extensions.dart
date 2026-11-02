@@ -11,20 +11,20 @@ extension CurrencyStringExtension on String {
       final currencyProvider = locator<CurrencyProvider>();
       final symbol = currencyProvider.selectedCurrency.symbol;
       return '$symbol$this';
-    } catch (e) {
+    } on Object catch (_) {
       // Fallback to INR symbol if provider is not available
       return '₹$this';
     }
   }
 
-  /// Adds the selected currency symbol with proper spacing for formatted amounts
+  /// Adds the selected currency symbol with spacing for formatted amounts
   /// Example: "1,000".withCurrencySpaced() => "₹ 1,000"
   String withCurrencySpaced() {
     try {
       final currencyProvider = locator<CurrencyProvider>();
       final symbol = currencyProvider.selectedCurrency.symbol;
       return '$symbol $this';
-    } catch (e) {
+    } on Object catch (_) {
       // Fallback to INR symbol if provider is not available
       return '₹ $this';
     }
@@ -50,7 +50,7 @@ extension CurrencyDoubleExtension on double {
         );
 
         return formatter.format(this);
-      } catch (e) {
+      } on Object catch (_) {
         // Fallback to Indian locale formatting if provider is not available
         final formatter = NumberFormat.decimalPatternDigits(
           locale: 'hi_IN',
@@ -74,7 +74,7 @@ extension CurrencyDoubleExtension on double {
         useGrouping: useGrouping,
       );
       return '$symbol$formattedAmount';
-    } catch (e) {
+    } on Object catch (_) {
       // Fallback formatting with INR symbol
       final formattedAmount = _formatAmount(
         decimalPlaces: decimalPlaces,
@@ -95,7 +95,7 @@ extension CurrencyDoubleExtension on double {
         useGrouping: useGrouping,
       );
       return '$symbol $formattedAmount';
-    } catch (e) {
+    } on Object catch (_) {
       // Fallback formatting with INR symbol
       final formattedAmount = _formatAmount(
         decimalPlaces: decimalPlaces,

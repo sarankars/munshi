@@ -1,11 +1,15 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/dashboard/providers/dashboard_provider.dart';
 import 'package:munshi/features/dashboard/widgets/category_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+/// Widget that shows spending broken down by category for the selected period.
 class DashboardCategoriesWidget extends StatefulWidget {
+  /// Creates a [DashboardCategoriesWidget].
   const DashboardCategoriesWidget({super.key});
 
   @override
@@ -44,7 +48,7 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
-        final colorScheme = Theme.of(context).colorScheme;
+        final colorScheme = context.colorScheme;
 
         return FadeTransition(
           opacity: _fadeAnimation,
@@ -53,7 +57,7 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
             children: [
               Text(
                 'Categories',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                style: context.textTheme.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface,
                 ),
@@ -98,83 +102,94 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
     );
   }
 
-  Widget _buildEmptyCategoriesState(ColorScheme colorScheme) {
+  Widget _buildEmptyCategoriesState(AppColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 15),
-      child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.circular(16),
-        shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                colorScheme.surface,
-                colorScheme.surface.withValues(alpha: 0.8),
-              ],
-            ),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.1),
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+      decoration: ShapeDecoration(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
           ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Icon container with background (matching category tile style)
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer.withValues(
-                        alpha: 0.3,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: colorScheme.primary.withValues(alpha: 0.2),
-                        width: 1.5,
-                      ),
+          side: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.1),
+          ),
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.surface,
+            colorScheme.surface.withValues(alpha: 0.8),
+          ],
+        ),
+        shadows: [
+          BoxShadow(
+            color: colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon container with background (matching category tile style)
+              Container(
+                width: 72,
+                height: 72,
+                decoration: ShapeDecoration(
+                  color: colorScheme.primaryContainer.withValues(
+                    alpha: 0.3,
+                  ),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 20,
+                      cornerSmoothing: 0.6,
                     ),
-                    child: Icon(
-                      Iconsax.graph_outline,
-                      size: 36,
-                      color: colorScheme.primary,
+                    side: BorderSide(
+                      color: colorScheme.primary.withValues(alpha: 0.2),
+                      width: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'No spending data yet',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Add some transactions to see your spending breakdown by category',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
+                child: Icon(
+                  Iconsax.graph_outline,
+                  size: 36,
+                  color: colorScheme.primary,
+                ),
               ),
-            ),
+              const SizedBox(height: 24),
+              Text(
+                'No spending data yet',
+                style: context.textTheme.titleLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Add some transactions to see your spending breakdown '
+                'by category',
+                style: context.textTheme.bodyMedium.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildLoadingCategories(ColorScheme colorScheme) {
+  Widget _buildLoadingCategories(AppColorScheme colorScheme) {
     return ListView.separated(
       shrinkWrap: true,
       padding: const EdgeInsets.only(top: 5),
@@ -187,85 +202,110 @@ class _DashboardCategoriesWidgetState extends State<DashboardCategoriesWidget>
     );
   }
 
-  Widget _buildShimmerCategoryTile(ColorScheme colorScheme, int index) {
+  Widget _buildShimmerCategoryTile(AppColorScheme colorScheme, int index) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.circular(16),
-        shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                colorScheme.surface,
-                colorScheme.surface.withValues(alpha: 0.8),
-              ],
-            ),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.1),
-            ),
+      padding: const EdgeInsets.all(16),
+      decoration: ShapeDecoration(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
           ),
-          child: Shimmer.fromColors(
-            baseColor: colorScheme.surfaceContainerHighest.withValues(
-              alpha: 0.3,
-            ),
-            highlightColor: colorScheme.surface,
-            child: Row(
-              children: [
-                // Icon container shimmer
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.1),
+          ),
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.surface,
+            colorScheme.surface.withValues(alpha: 0.8),
+          ],
+        ),
+        shadows: [
+          BoxShadow(
+            color: colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Shimmer.fromColors(
+        baseColor: colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.3,
+        ),
+        highlightColor: colorScheme.surface,
+        child: Row(
+          children: [
+            // Icon container shimmer
+            Container(
+              width: 48,
+              height: 48,
+              decoration: ShapeDecoration(
+                color: colorScheme.surface,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
                   ),
                 ),
-                const SizedBox(width: 16),
-                // Category name and transaction count shimmer
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(9),
+              ),
+            ),
+            const SizedBox(width: 16),
+            // Category name and transaction count shimmer
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 18,
+                    decoration: ShapeDecoration(
+                      color: colorScheme.surface,
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 9,
+                          cornerSmoothing: 0.6,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Container(
-                        width: 120,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(7),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 120,
+                    height: 14,
+                    decoration: ShapeDecoration(
+                      color: colorScheme.surface,
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 7,
+                          cornerSmoothing: 0.6,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                // Trailing arrow shimmer
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            const SizedBox(width: 16),
+            // Trailing arrow shimmer
+            Container(
+              width: 32,
+              height: 32,
+              decoration: ShapeDecoration(
+                color: colorScheme.surface,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 8,
+                    cornerSmoothing: 0.6,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

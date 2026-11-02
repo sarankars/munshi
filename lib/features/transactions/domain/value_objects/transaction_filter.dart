@@ -68,7 +68,8 @@ class TransactionFilter {
   /// Either bound may be `null` to represent an open-ended range:
   /// - Only [startDate] → "from this date onwards".
   /// - Only [endDate] → "up to and including this date".
-  /// - Neither → equivalent to [TransactionFilter.empty] for the date dimension.
+  /// - Neither → equivalent to [TransactionFilter.empty] for the date
+  ///   dimension.
   ///
   /// When [datePeriod] is also set on the same filter (e.g. via [copyWith]),
   /// [datePeriod] takes precedence in [effectiveStartDate] and

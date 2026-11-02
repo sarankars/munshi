@@ -1,20 +1,34 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/dashboard/providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 // Enum to define different stat types
-enum DashboardStatType { transactions, biggestSpend }
+/// The type of statistic shown by a [DashboardStatsWidget].
+enum DashboardStatType {
+  /// Total number of transactions.
+  transactions,
 
+  /// The largest single expense.
+  biggestSpend,
+}
+
+/// A card that displays a single dashboard statistic (e.g., transaction count).
 class DashboardStatsWidget extends StatefulWidget {
+  /// Creates a [DashboardStatsWidget] for the given [statType].
   const DashboardStatsWidget({
     required this.statType,
     super.key,
-    this.animationDelay = const Duration(),
+    this.animationDelay = Duration.zero,
   });
 
+  /// Which statistic to display.
   final DashboardStatType statType;
+
+  /// Delay before the entry animation starts.
   final Duration animationDelay;
 
   @override
@@ -88,7 +102,7 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
-        final colorScheme = Theme.of(context).colorScheme;
+        final colorScheme = context.colorScheme;
 
         // Get stat-specific data
         final statData = _getStatData(dashboardProvider);
@@ -114,13 +128,18 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       scale: _scaleAnimation.value,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.1),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 20,
+                              cornerSmoothing: 0.6,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline.withValues(alpha: 0.1),
+                            ),
                           ),
-                          boxShadow: [
+                          shadows: [
                             BoxShadow(
                               color: colorScheme.shadow.withValues(
                                 alpha: _elevationAnimation.value,
@@ -143,14 +162,19 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
+                                  decoration: ShapeDecoration(
                                     color: statData.accentColor.withValues(
                                       alpha: 0.1,
                                     ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: statData.accentColor.withValues(
-                                        alpha: 0.2,
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 12,
+                                        cornerSmoothing: 0.6,
+                                      ),
+                                      side: BorderSide(
+                                        color: statData.accentColor.withValues(
+                                          alpha: 0.2,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -164,11 +188,16 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                                 Container(
                                   width: 6,
                                   height: 6,
-                                  decoration: BoxDecoration(
+                                  decoration: ShapeDecoration(
                                     color: statData.accentColor.withValues(
                                       alpha: 0.4,
                                     ),
-                                    borderRadius: BorderRadius.circular(3),
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 3,
+                                        cornerSmoothing: 0.6,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -179,13 +208,12 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                             // Value with improved typography
                             Text(
                               statData.value,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color: colorScheme.onSurface,
-                                    height: 1,
-                                    letterSpacing: -0.3,
-                                  ),
+                              style: context.textTheme.titleLarge.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: colorScheme.onSurface,
+                                height: 1,
+                                letterSpacing: -0.3,
+                              ),
                             ),
 
                             const SizedBox(height: 4),
@@ -196,18 +224,18 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                                 Expanded(
                                   child: Text(
                                     statData.title,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: colorScheme.onSurface
-                                              .withValues(alpha: 0.7),
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.1,
-                                          fontSize: 14,
-                                        ),
+                                    style: context.textTheme.bodySmall.copyWith(
+                                      color: colorScheme.onSurface.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.1,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                                 Icon(
-                                  Icons.trending_up_rounded,
+                                  Iconsax.trend_up_outline,
                                   size: 14,
                                   color: statData.accentColor.withValues(
                                     alpha: 0.6,
@@ -237,19 +265,19 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
           title: 'Transactions',
           value: provider.formattedTransactionCount,
           icon: Iconsax.receipt_search_outline,
-          accentColor: Colors.blue,
+          accentColor: CupertinoColors.systemBlue,
         );
       case DashboardStatType.biggestSpend:
         return _StatData(
           title: 'Biggest Spend',
           value: provider.formattedBiggestSpend,
           icon: Iconsax.card_pos_outline,
-          accentColor: Colors.orange,
+          accentColor: CupertinoColors.systemOrange,
         );
     }
   }
 
-  Widget _buildLoadingWidget(ColorScheme colorScheme) {
+  Widget _buildLoadingWidget(AppColorScheme colorScheme) {
     return SlideTransition(
       position: _entrySlideAnimation,
       child: ScaleTransition(
@@ -258,13 +286,18 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
           opacity: _entryController,
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 20,
+                  cornerSmoothing: 0.6,
+                ),
+                side: BorderSide(
+                  color: colorScheme.outline.withValues(alpha: 0.1),
+                ),
               ),
-              boxShadow: [
+              shadows: [
                 BoxShadow(
                   color: colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
@@ -288,17 +321,27 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       Container(
                         width: 36,
                         height: 36,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                       Container(
                         width: 6,
                         height: 6,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(3),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 3,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -310,9 +353,14 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                   Container(
                     width: double.infinity,
                     height: 24,
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(8),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 8,
+                          cornerSmoothing: 0.6,
+                        ),
+                      ),
                     ),
                   ),
 
@@ -324,9 +372,14 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       Expanded(
                         child: Container(
                           height: 14,
-                          decoration: BoxDecoration(
+                          decoration: ShapeDecoration(
                             color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(7),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 7,
+                                cornerSmoothing: 0.6,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -334,9 +387,14 @@ class _DashboardStatsWidgetState extends State<DashboardStatsWidget>
                       Container(
                         width: 14,
                         height: 14,
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(7),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 7,
+                              cornerSmoothing: 0.6,
+                            ),
+                          ),
                         ),
                       ),
                     ],

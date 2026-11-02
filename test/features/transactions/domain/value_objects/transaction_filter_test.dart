@@ -1,17 +1,20 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
 import 'package:munshi/core/models/date_period.dart';
 import 'package:munshi/core/models/period_type.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
+import 'package:munshi/features/transactions/domain/value_objects/category_icon_spec.dart';
 import 'package:munshi/features/transactions/domain/value_objects/transaction_filter.dart';
 
 // A fixed category used across tests.
 final _tCategory = TransactionCategory(
   id: 1,
   name: 'Food',
-  icon: const IconData(0xe25a, fontFamily: 'MaterialIcons'),
-  color: const Color(0xFF4CAF50),
+  icon: const CategoryIconSpec(
+    codePoint: 0xe25a,
+    fontFamily: 'MaterialIcons',
+  ),
+  colorArgb: 0xFF4CAF50,
   type: TransactionType.expense,
   isDefault: true,
   createdAt: DateTime(2026),

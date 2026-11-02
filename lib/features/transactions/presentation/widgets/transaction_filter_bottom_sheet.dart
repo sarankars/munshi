@@ -1,21 +1,30 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:munshi/core/enums/transaction_type.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction_category.dart';
 import 'package:munshi/features/transactions/domain/value_objects/transaction_filter.dart';
+import 'package:munshi/features/transactions/presentation/extensions/transaction_category_ui_extensions.dart';
 import 'package:munshi/providers/currency_provider.dart';
 import 'package:provider/provider.dart';
 
+/// A bottom sheet that exposes filter controls for the transaction list.
 class TransactionFilterBottomSheet extends StatefulWidget {
+  /// Creates a [TransactionFilterBottomSheet] initialised with [initialFilter].
   const TransactionFilterBottomSheet({
     required this.initialFilter,
     required this.onApplyFilter,
     super.key,
   });
+
+  /// The filter state to display when the sheet opens.
   final TransactionFilter initialFilter;
+
+  /// Called when the user taps "Apply" with the new filter.
   final void Function(TransactionFilter) onApplyFilter;
 
   @override
@@ -24,9 +33,8 @@ class TransactionFilterBottomSheet extends StatefulWidget {
 }
 
 class _TransactionFilterBottomSheetState
-    extends State<TransactionFilterBottomSheet>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
+    extends State<TransactionFilterBottomSheet> {
+  int _selectedTabIndex = 0;
   late TransactionFilter _workingFilter;
   final _minAmountController = TextEditingController();
   final _maxAmountController = TextEditingController();
@@ -42,7 +50,6 @@ class _TransactionFilterBottomSheetState
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
     _workingFilter = widget.initialFilter;
 
     // Initialize amount controllers
@@ -64,20 +71,98 @@ class _TransactionFilterBottomSheetState
 
   @override
   void dispose() {
-    _tabController.dispose();
     _minAmountController.dispose();
     _maxAmountController.dispose();
     super.dispose();
   }
 
+  Future<DateTime?> _pickCupertinoDate({
+    required DateTime initialDate,
+    required DateTime minimumDate,
+    required DateTime maximumDate,
+    required String title,
+  }) async {
+    final colorScheme = context.colorScheme;
+    var tempDate = initialDate;
+
+    return showCupertinoModalPopup<DateTime>(
+      context: context,
+      builder: (popupContext) {
+        return Container(
+          height: 300,
+          decoration: ShapeDecoration(
+            color: colorScheme.surface,
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.vertical(
+                top: SmoothRadius(cornerRadius: 20, cornerSmoothing: 0.6),
+              ),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => Navigator.of(popupContext).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      Text(
+                        title,
+                        style: context.textTheme.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () =>
+                            Navigator.of(popupContext).pop(tempDate),
+                        child: const Text('Done'),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 1,
+                  color: colorScheme.outline.withValues(alpha: 0.2),
+                ),
+                Expanded(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: initialDate,
+                    minimumDate: minimumDate,
+                    maximumDate: maximumDate,
+                    onDateTimeChanged: (date) => tempDate = date,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
-      decoration: BoxDecoration(
+      height: MediaQuery.sizeOf(context).height * 0.85,
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 24, cornerSmoothing: 0.6),
+          ),
+        ),
       ),
       child: Column(
         children: [
@@ -86,27 +171,34 @@ class _TransactionFilterBottomSheetState
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             height: 4,
             width: 40,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 2,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
 
           // Header
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
             child: Row(
               children: [
                 Text(
                   'Filter & Sort',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: context.textTheme.headlineSmall.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
                 ),
                 const Spacer(),
                 if (_workingFilter.hasActiveFilters)
-                  TextButton(
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
                     onPressed: () {
                       setState(() {
                         _workingFilter = TransactionFilter.empty();
@@ -120,23 +212,48 @@ class _TransactionFilterBottomSheetState
             ),
           ),
 
-          // Tab Bar
-          TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            tabs: const [
-              Tab(text: 'Date'),
-              Tab(text: 'Amount'),
-              Tab(text: 'Type'),
-              Tab(text: 'Category'),
-            ],
+          // Segmented Control
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SizedBox(
+              width: double.infinity,
+              child: CupertinoSlidingSegmentedControl<int>(
+                groupValue: _selectedTabIndex,
+                backgroundColor: colorScheme.surfaceContainerHighest,
+                thumbColor: colorScheme.surface,
+                onValueChanged: (value) {
+                  if (value != null) {
+                    setState(() => _selectedTabIndex = value);
+                  }
+                },
+                children: const {
+                  0: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('Date'),
+                  ),
+                  1: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('Amount'),
+                  ),
+                  2: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('Type'),
+                  ),
+                  3: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('Category'),
+                  ),
+                },
+              ),
+            ),
           ),
+
+          const SizedBox(height: 8),
 
           // Tab Views
           Expanded(
-            child: TabBarView(
-              controller: _tabController,
+            child: IndexedStack(
+              index: _selectedTabIndex,
               children: [
                 _buildDateFilterTab(colorScheme),
                 _buildAmountFilterTab(colorScheme),
@@ -152,25 +269,36 @@ class _TransactionFilterBottomSheetState
               24,
               16,
               24,
-              MediaQuery.of(context).padding.bottom + 16,
+              MediaQuery.paddingOf(context).bottom + 16,
             ),
             child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: CupertinoButton(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    color: colorScheme.surfaceContainerHighest,
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 16,
+                      cornerSmoothing: 0.6,
+                    ),
                     onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                    child: Text(
+                      'Cancel',
+                      style: context.textTheme.bodyLarge.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    child: const Text('Cancel'),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: FilledButton(
+                  child: CupertinoButton.filled(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 16,
+                      cornerSmoothing: 0.6,
+                    ),
                     onPressed: () {
                       // Parse amount filters
                       final minAmount = double.tryParse(
@@ -190,13 +318,10 @@ class _TransactionFilterBottomSheetState
                       widget.onApplyFilter(finalFilter);
                       Navigator.pop(context);
                     },
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                    child: const Text(
+                      'Apply',
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    child: const Text('Apply'),
                   ),
                 ),
               ],
@@ -207,7 +332,7 @@ class _TransactionFilterBottomSheetState
     );
   }
 
-  Widget _buildDateFilterTab(ColorScheme colorScheme) {
+  Widget _buildDateFilterTab(AppColorScheme colorScheme) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -215,7 +340,7 @@ class _TransactionFilterBottomSheetState
         children: [
           Text(
             'Quick Periods',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.onSurface,
             ),
@@ -230,8 +355,8 @@ class _TransactionFilterBottomSheetState
                   TransactionFilter.fromTimeframe(
                     timeframe,
                   ).datePeriod?.displayName;
-              return FilterChip(
-                label: Text(timeframe),
+              return _CupertinoFilterChip(
+                label: timeframe,
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
@@ -252,7 +377,7 @@ class _TransactionFilterBottomSheetState
           const SizedBox(height: 24),
           Text(
             'Custom Range',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.onSurface,
             ),
@@ -261,73 +386,133 @@ class _TransactionFilterBottomSheetState
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
                   onPressed: () async {
-                    final startDate = await showDatePicker(
-                      context: context,
-                      initialDate:
-                          _workingFilter.customStartDate ?? DateTime.now(),
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime.now(),
+                    final now = DateTime.now();
+                    final initial = _workingFilter.customStartDate ?? now;
+                    final startDate = await _pickCupertinoDate(
+                      initialDate: initial.isAfter(now) ? now : initial,
+                      minimumDate: DateTime(2020),
+                      maximumDate: now,
+                      title: 'Start Date',
                     );
                     if (startDate != null) {
                       setState(() {
                         _workingFilter = _workingFilter.copyWith(
                           customStartDate: startDate,
-                          clearDatePeriod: true, // Clear predefined period
+                          clearDatePeriod: true,
                         );
                       });
                     }
                   },
-                  icon: const Icon(Icons.calendar_today, size: 16),
-                  label: Text(
-                    _workingFilter.customStartDate != null
-                        ? DateFormat(
-                            'd MMM y',
-                          ).format(_workingFilter.customStartDate!)
-                        : 'Start Date',
-                  ),
-                  style: OutlinedButton.styleFrom(
+                  child: Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
-                      horizontal: 16,
+                      horizontal: 14,
+                    ),
+                    decoration: ShapeDecoration(
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 0.6,
+                        ),
+                        side: BorderSide(
+                          color: colorScheme.outline.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.calendar,
+                          size: 16,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _workingFilter.customStartDate != null
+                              ? DateFormat(
+                                  'd MMM y',
+                                ).format(_workingFilter.customStartDate!)
+                              : 'Start Date',
+                          style: context.textTheme.bodyMedium.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: OutlinedButton.icon(
+                child: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
                   onPressed: () async {
-                    final endDate = await showDatePicker(
-                      context: context,
-                      initialDate:
-                          _workingFilter.customEndDate ?? DateTime.now(),
-                      firstDate:
-                          _workingFilter.customStartDate ?? DateTime(2020),
-                      lastDate: DateTime.now(),
+                    final now = DateTime.now();
+                    final minDate =
+                        _workingFilter.customStartDate ?? DateTime(2020);
+                    var initial = _workingFilter.customEndDate ?? now;
+                    if (initial.isBefore(minDate)) {
+                      initial = minDate;
+                    }
+                    final endDate = await _pickCupertinoDate(
+                      initialDate: initial,
+                      minimumDate: minDate,
+                      maximumDate: now,
+                      title: 'End Date',
                     );
                     if (endDate != null) {
                       setState(() {
                         _workingFilter = _workingFilter.copyWith(
                           customEndDate: endDate,
-                          clearDatePeriod: true, // Clear predefined period
+                          clearDatePeriod: true,
                         );
                       });
                     }
                   },
-                  icon: const Icon(Icons.calendar_today, size: 16),
-                  label: Text(
-                    _workingFilter.customEndDate != null
-                        ? DateFormat(
-                            'd MMM y',
-                          ).format(_workingFilter.customEndDate!)
-                        : 'End Date',
-                  ),
-                  style: OutlinedButton.styleFrom(
+                  child: Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
-                      horizontal: 16,
+                      horizontal: 14,
+                    ),
+                    decoration: ShapeDecoration(
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 0.6,
+                        ),
+                        side: BorderSide(
+                          color: colorScheme.outline.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.calendar,
+                          size: 16,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _workingFilter.customEndDate != null
+                              ? DateFormat(
+                                  'd MMM y',
+                                ).format(_workingFilter.customEndDate!)
+                              : 'End Date',
+                          style: context.textTheme.bodyMedium.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -338,7 +523,9 @@ class _TransactionFilterBottomSheetState
               _workingFilter.customEndDate != null)
             Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: TextButton.icon(
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
                 onPressed: () {
                   setState(() {
                     _workingFilter = _workingFilter.copyWith(
@@ -347,8 +534,24 @@ class _TransactionFilterBottomSheetState
                     );
                   });
                 },
-                icon: const Icon(Icons.clear, size: 16),
-                label: const Text('Clear Custom Range'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      CupertinoIcons.xmark_circle,
+                      size: 16,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Clear Custom Range',
+                      style: context.textTheme.bodyMedium.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
@@ -356,7 +559,7 @@ class _TransactionFilterBottomSheetState
     );
   }
 
-  Widget _buildAmountFilterTab(ColorScheme colorScheme) {
+  Widget _buildAmountFilterTab(AppColorScheme colorScheme) {
     final currencySymbol = context
         .watch<CurrencyProvider>()
         .selectedCurrency
@@ -369,53 +572,127 @@ class _TransactionFilterBottomSheetState
         children: [
           Text(
             'Amount Range',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
-          TextField(
+          Text(
+            'Minimum Amount',
+            style: context.textTheme.bodySmall.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 6),
+          CupertinoTextField(
             controller: _minAmountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
             ],
-            decoration: InputDecoration(
-              labelText: 'Minimum Amount',
-              prefixIcon: const Icon(Iconsax.wallet_1_outline),
-              prefixText: '$currencySymbol ',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+            placeholder: '0.00',
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            prefix: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Iconsax.wallet_1_outline,
+                    size: 18,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    currencySymbol,
+                    style: context.textTheme.bodyLarge.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
-              suffixIcon: _minAmountController.text.isNotEmpty
-                  ? IconButton(
-                      onPressed: _minAmountController.clear,
-                      icon: const Icon(Icons.clear, size: 20),
-                    )
-                  : null,
+            ),
+            suffix: _minAmountController.text.isNotEmpty
+                ? CupertinoButton(
+                    padding: const EdgeInsets.only(right: 10),
+                    minimumSize: Size.zero,
+                    onPressed: _minAmountController.clear,
+                    child: Icon(
+                      CupertinoIcons.clear_circled_solid,
+                      size: 18,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  )
+                : null,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLow,
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 12,
+                cornerSmoothing: 0.6,
+              ),
+              border: Border.all(
+                color: colorScheme.outline.withValues(alpha: 0.4),
+              ),
             ),
           ),
           const SizedBox(height: 16),
-          TextField(
+          Text(
+            'Maximum Amount',
+            style: context.textTheme.bodySmall.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 6),
+          CupertinoTextField(
             controller: _maxAmountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
             ],
-            decoration: InputDecoration(
-              labelText: 'Maximum Amount',
-              prefixIcon: const Icon(Iconsax.wallet_1_outline),
-              prefixText: '$currencySymbol ',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+            placeholder: '0.00',
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            prefix: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Iconsax.wallet_1_outline,
+                    size: 18,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    currencySymbol,
+                    style: context.textTheme.bodyLarge.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
-              suffixIcon: _maxAmountController.text.isNotEmpty
-                  ? IconButton(
-                      onPressed: _maxAmountController.clear,
-                      icon: const Icon(Icons.clear, size: 20),
-                    )
-                  : null,
+            ),
+            suffix: _maxAmountController.text.isNotEmpty
+                ? CupertinoButton(
+                    padding: const EdgeInsets.only(right: 10),
+                    minimumSize: Size.zero,
+                    onPressed: _maxAmountController.clear,
+                    child: Icon(
+                      CupertinoIcons.clear_circled_solid,
+                      size: 18,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  )
+                : null,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLow,
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 12,
+                cornerSmoothing: 0.6,
+              ),
+              border: Border.all(
+                color: colorScheme.outline.withValues(alpha: 0.4),
+              ),
             ),
           ),
         ],
@@ -423,7 +700,7 @@ class _TransactionFilterBottomSheetState
     );
   }
 
-  Widget _buildTypeFilterTab(ColorScheme colorScheme) {
+  Widget _buildTypeFilterTab(AppColorScheme colorScheme) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -431,7 +708,7 @@ class _TransactionFilterBottomSheetState
         children: [
           Text(
             'Transaction Type',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.textTheme.titleMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: colorScheme.onSurface,
             ),
@@ -442,19 +719,19 @@ class _TransactionFilterBottomSheetState
             runSpacing: 8,
             children: TransactionType.values.map((type) {
               final isSelected = _workingFilter.types?.contains(type) ?? false;
-              return FilterChip(
-                label: Text(type.name.toUpperCase()),
+              return _CupertinoFilterChip(
+                label: type.name.toUpperCase(),
                 selected: isSelected,
-                avatar: Icon(
+                leading: Icon(
                   type == TransactionType.income
                       ? Iconsax.arrow_down_outline
                       : Iconsax.arrow_up_outline,
                   size: 16,
                   color: isSelected
-                      ? colorScheme.onPrimary
+                      ? colorScheme.onPrimaryContainer
                       : (type == TransactionType.income
-                            ? Colors.green
-                            : Colors.red),
+                            ? CupertinoColors.systemGreen
+                            : CupertinoColors.systemRed),
                 ),
                 onSelected: (selected) {
                   setState(() {
@@ -479,7 +756,7 @@ class _TransactionFilterBottomSheetState
     );
   }
 
-  Widget _buildCategoryFilterTab(ColorScheme colorScheme) {
+  Widget _buildCategoryFilterTab(AppColorScheme colorScheme) {
     return Consumer<CategoryProvider>(
       builder: (context, categoryProvider, _) {
         return SingleChildScrollView(
@@ -489,7 +766,7 @@ class _TransactionFilterBottomSheetState
             children: [
               Text(
                 'Categories',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: context.textTheme.titleMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: colorScheme.onSurface,
                 ),
@@ -499,7 +776,7 @@ class _TransactionFilterBottomSheetState
               // Expense Categories
               Text(
                 'Expense Categories',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: context.textTheme.bodyLarge.copyWith(
                   fontWeight: FontWeight.w500,
                   color: colorScheme.onSurface,
                 ),
@@ -511,15 +788,15 @@ class _TransactionFilterBottomSheetState
                 children: categoryProvider.expenseCategories.map((category) {
                   final isSelected =
                       _workingFilter.categories?.contains(category) ?? false;
-                  return FilterChip(
-                    label: Text(category.name),
+                  return _CupertinoFilterChip(
+                    label: category.name,
                     selected: isSelected,
-                    avatar: Icon(
-                      category.icon,
+                    leading: Icon(
+                      category.displayIcon,
                       size: 16,
                       color: isSelected
-                          ? colorScheme.onPrimary
-                          : category.color,
+                          ? colorScheme.onPrimaryContainer
+                          : category.displayColor,
                     ),
                     onSelected: (selected) {
                       setState(() {
@@ -548,7 +825,7 @@ class _TransactionFilterBottomSheetState
               // Income Categories
               Text(
                 'Income Categories',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: context.textTheme.bodyLarge.copyWith(
                   fontWeight: FontWeight.w500,
                   color: colorScheme.onSurface,
                 ),
@@ -560,15 +837,15 @@ class _TransactionFilterBottomSheetState
                 children: categoryProvider.incomeCategories.map((category) {
                   final isSelected =
                       _workingFilter.categories?.contains(category) ?? false;
-                  return FilterChip(
-                    label: Text(category.name),
+                  return _CupertinoFilterChip(
+                    label: category.name,
                     selected: isSelected,
-                    avatar: Icon(
-                      category.icon,
+                    leading: Icon(
+                      category.displayIcon,
                       size: 16,
                       color: isSelected
-                          ? colorScheme.onPrimary
-                          : category.color,
+                          ? colorScheme.onPrimaryContainer
+                          : category.displayColor,
                     ),
                     onSelected: (selected) {
                       setState(() {
@@ -595,6 +872,70 @@ class _TransactionFilterBottomSheetState
           ),
         );
       },
+    );
+  }
+}
+
+class _CupertinoFilterChip extends StatelessWidget {
+  const _CupertinoFilterChip({
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+    this.leading,
+  });
+
+  final String label;
+  final bool selected;
+  final ValueChanged<bool> onSelected;
+  final Widget? leading;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: Size.zero,
+      onPressed: () => onSelected(!selected),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: ShapeDecoration(
+          color: selected
+              ? colorScheme.primaryContainer
+              : colorScheme.surfaceContainerLow,
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 12,
+              cornerSmoothing: 0.6,
+            ),
+            side: BorderSide(
+              color: selected
+                  ? colorScheme.primary
+                  : colorScheme.outline.withValues(alpha: 0.3),
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: context.textTheme.bodyMedium.copyWith(
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected
+                    ? colorScheme.onPrimaryContainer
+                    : colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,11 +1,17 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:munshi/core/extensions/currency_extensions.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 
+/// A bottom sheet that shows the full details of a single transaction.
 class TransactionDetailsScreen extends StatefulWidget {
+  /// Creates a [TransactionDetailsScreen] for the given [transaction].
   const TransactionDetailsScreen({required this.transaction, super.key});
+
+  /// The transaction whose details are displayed.
   final Transaction transaction;
   @override
   State<TransactionDetailsScreen> createState() =>
@@ -15,13 +21,17 @@ class TransactionDetailsScreen extends StatefulWidget {
 class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.vertical(
+            top: SmoothRadius(cornerRadius: 24, cornerSmoothing: 0.6),
+          ),
+        ),
+        shadows: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.15),
             blurRadius: 20,
@@ -37,17 +47,20 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             margin: const EdgeInsets.only(top: 12, bottom: 8),
             height: 4,
             width: 40,
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 2,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
           ),
 
-          const SizedBox(height: 8),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Column(
             children: [
-              // Header Section
               // Header Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,12 +88,13 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                     widget.transaction.note ?? 'No note',
                     Iconsax.note_text_outline,
                     colorScheme,
+                    isLast: true,
                   ),
                 ],
               ),
 
               // Bottom padding for safe area
-              SizedBox(height: MediaQuery.of(context).padding.bottom),
+              SizedBox(height: MediaQuery.paddingOf(context).bottom + 12),
             ],
           ),
         ],
@@ -115,7 +129,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     String label,
     String value,
     IconData icon,
-    ColorScheme colorScheme, {
+    AppColorScheme colorScheme, {
     bool isLast = false,
   }) {
     return Container(
@@ -125,9 +139,14 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           Container(
             margin: const EdgeInsets.only(top: 4),
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.primaryContainer.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(10),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
             child: Icon(icon, size: 20, color: colorScheme.primary),
           ),
@@ -138,7 +157,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
               children: [
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: context.textTheme.bodySmall.copyWith(
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
@@ -147,7 +166,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: context.textTheme.bodyLarge.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
@@ -158,15 +177,22 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           if (label == 'Status')
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.shade200),
+              decoration: ShapeDecoration(
+                color: CupertinoColors.systemGreen.withValues(alpha: 0.15),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 0.6,
+                  ),
+                  side: BorderSide(
+                    color: CupertinoColors.systemGreen.withValues(alpha: 0.4),
+                  ),
+                ),
               ),
               child: Text(
                 value,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.green.shade700,
+                style: context.textTheme.bodySmall.copyWith(
+                  color: CupertinoColors.systemGreen,
                   fontWeight: FontWeight.w600,
                   fontSize: 11,
                 ),

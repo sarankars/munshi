@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:munshi/core/theme.dart';
 
+/// Displays a time-based greeting (e.g., "Good Morning!").
 class GreetingText extends StatelessWidget {
+  /// Creates a [GreetingText].
   const GreetingText({super.key});
 
   String _getTimeBasedGreeting() {
@@ -18,12 +21,12 @@ class GreetingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Text(
       _getTimeBasedGreeting(),
-      style: Theme.of(
-        context,
-      ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+      style: context.textTheme.bodyMedium.copyWith(
+        color: colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }

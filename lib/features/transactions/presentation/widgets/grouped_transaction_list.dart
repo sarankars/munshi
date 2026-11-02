@@ -1,11 +1,15 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/transactions/domain/entities/daily_transactions.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 import 'package:munshi/features/transactions/presentation/widgets/transaction_tile.dart';
 
+/// A list widget that groups transactions by calendar day.
 class GroupedTransactionList extends StatefulWidget {
+  /// Creates a [GroupedTransactionList].
   const GroupedTransactionList({
     required this.groupedTransactions,
     required this.onTap,
@@ -20,12 +24,25 @@ class GroupedTransactionList extends StatefulWidget {
   // Accounts for leading widget (56dp) + horizontal padding (16dp)
   static const double _kDividerIndent = 72;
 
+  /// Transactions grouped by day to render.
   final List<DailyTransactions> groupedTransactions;
+
+  /// Called when a transaction tile is tapped.
   final void Function(Transaction) onTap;
+
+  /// Called when a transaction is deleted via the swipe action.
   final Future<void> Function(Transaction transaction)? onDelete;
+
+  /// Called when a transaction is edited via the swipe action.
   final Future<void> Function(Transaction transaction)? onEdit;
+
+  /// Called when the category chip of a transaction is tapped.
   final void Function(Transaction)? onCategoryTap;
+
+  /// Optional scroll controller for the underlying list.
   final ScrollController? controller;
+
+  /// Whether a next-page load is in progress (shows a bottom spinner).
   final bool isLoadingMore;
 
   @override
@@ -65,7 +82,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return AnimatedBuilder(
       animation: _slideAnimation,
       builder: (context, child) {
@@ -76,21 +93,22 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
             child: widget.groupedTransactions.isEmpty && !widget.isLoadingMore
                 ? _buildEmptyState(colorScheme)
                 : SlidableAutoCloseBehavior(
-                    child: Scrollbar(
+                    child: CupertinoScrollbar(
                       controller: widget.controller,
-                      interactive: true,
-                      thumbVisibility: false,
-                      trackVisibility: false,
-                      radius: const Radius.circular(4),
+                      radius: const SmoothRadius(
+                        cornerRadius: 4,
+                        cornerSmoothing: 0.6,
+                      ),
                       child: ListView(
                         controller: widget.controller,
+                        padding: const EdgeInsets.only(bottom: 110),
                         children: [
-                          ..._buildGroupedTransactionWidgets(),
+                          ..._buildGroupedTransactionWidgets(colorScheme),
                           if (widget.isLoadingMore)
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Center(
-                                child: CircularProgressIndicator.adaptive(),
+                                child: CupertinoActivityIndicator(),
                               ),
                             ),
                         ],
@@ -103,7 +121,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
     );
   }
 
-  List<Widget> _buildGroupedTransactionWidgets() {
+  List<Widget> _buildGroupedTransactionWidgets(AppColorScheme colorScheme) {
     final widgets = <Widget>[];
     var globalIndex = 0;
 
@@ -128,10 +146,12 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
         // Add separator if not the last transaction of the date
         if (transactionIndex < transactions.length - 1) {
           widgets.add(
-            const Divider(
+            Container(
               height: 1,
-              thickness: 1,
-              indent: GroupedTransactionList._kDividerIndent,
+              margin: const EdgeInsets.only(
+                left: GroupedTransactionList._kDividerIndent,
+              ),
+              color: colorScheme.outline.withValues(alpha: 0.15),
             ),
           );
         }
@@ -168,6 +188,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
       builder: (context, value, child) {
         final slideValue = Curves.easeOutCubic.transform(value);
         final fadeValue = Curves.easeOut.transform(value);
+        final colorScheme = context.colorScheme;
 
         return Transform.translate(
           offset: Offset(0, 30 * (1 - slideValue)),
@@ -184,8 +205,8 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
                 children: [
                   Text(
                     displayText,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: context.textTheme.titleSmall.copyWith(
+                      color: colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -193,9 +214,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
                   Expanded(
                     child: Container(
                       height: 1,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outline.withValues(alpha: 0.3),
+                      color: colorScheme.outline.withValues(alpha: 0.3),
                     ),
                   ),
                 ],
@@ -245,19 +264,24 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
     );
   }
 
-  Widget _buildEmptyState(ColorScheme colorScheme) {
+  Widget _buildEmptyState(AppColorScheme colorScheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(24),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 24,
+                  cornerSmoothing: 0.6,
+                ),
+              ),
             ),
             child: Icon(
-              Icons.receipt_long_outlined,
+              CupertinoIcons.doc_text,
               size: 48,
               color: colorScheme.onSurfaceVariant,
             ),
@@ -265,7 +289,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
           const SizedBox(height: 24),
           Text(
             'No transactions found',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: context.textTheme.headlineSmall.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
@@ -273,7 +297,7 @@ class _GroupedTransactionListState extends State<GroupedTransactionList>
           const SizedBox(height: 8),
           Text(
             'Try adjusting your filters or search terms',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyMedium.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,

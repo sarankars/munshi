@@ -6,7 +6,8 @@ import 'package:munshi/features/transactions/domain/repositories/transaction_rep
 /// Delegates the delete operation to [TransactionRepository], keeping the
 /// presentation layer free of storage implementation details.
 class DeleteTransaction {
-  /// Creates an instance of [DeleteTransaction] with the provided [_repository].
+  /// Creates an instance of [DeleteTransaction] with the provided
+  /// [_repository].
   const DeleteTransaction(this._repository);
 
   final TransactionRepository _repository;

@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:munshi/features/categories/providers/category_provider.dart';
 import 'package:munshi/features/transactions/domain/entities/transaction.dart';
 import 'package:munshi/features/transactions/domain/value_objects/transaction_filter.dart';
@@ -13,6 +15,7 @@ import 'package:munshi/features/transactions/presentation/widgets/grouped_transa
 import 'package:munshi/features/transactions/presentation/widgets/transaction_details_screen.dart';
 import 'package:munshi/features/transactions/presentation/widgets/transaction_filter_bottom_sheet.dart';
 import 'package:munshi/providers/currency_provider.dart';
+import 'package:munshi/widgets/cupertino_toast.dart';
 import 'package:provider/provider.dart';
 
 /// Screen that displays the paginated, filterable transaction history.
@@ -38,8 +41,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
     super.dispose();
   }
 
@@ -58,158 +62,158 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     // Watch CurrencyProvider to rebuild entire screen when currency changes.
-    // This is necessary because currency formatting occurs throughout the widget tree
-    // in transaction tiles, filter displays, and detail modals.
+    // This is necessary because currency formatting occurs throughout the
+    // widget tree in transaction tiles, filter displays, and detail modals.
     context.watch<CurrencyProvider>();
     return BlocBuilder<TransactionBloc, TransactionState>(
       builder: (context, state) {
         final groupedTransactions = state.groupedTransactions;
-        return Scaffold(
+        return CupertinoPageScaffold(
           backgroundColor: colorScheme.surface,
-          appBar: AppBar(
-            title: Text(
+          navigationBar: CupertinoNavigationBar(
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.9),
+            border: null,
+            middle: Text(
               'Transactions',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              style: context.textTheme.headlineSmall.copyWith(
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
               ),
             ),
-            centerTitle: false,
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    onPressed: () => _showFilterBottomSheet(context, state),
-                    icon: const Icon(Iconsax.filter_outline),
-                    tooltip: 'Filter transactions',
+            trailing: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                CupertinoButton(
+                  padding: const EdgeInsets.all(6),
+                  minimumSize: Size.zero,
+                  onPressed: () => _showFilterBottomSheet(context, state),
+                  child: Icon(
+                    Iconsax.filter_outline,
+                    color: colorScheme.onSurface,
+                    size: 22,
                   ),
-                  if (state.currentFilter.hasActiveFilters)
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: colorScheme.primary,
-                          shape: BoxShape.circle,
+                ),
+                if (state.currentFilter.hasActiveFilters)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '${state.currentFilter.activeFilterCount}',
+                        style: TextStyle(
+                          color: colorScheme.onPrimary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
                         ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: Text(
-                          '${state.currentFilter.activeFilterCount}',
-                          style: TextStyle(
-                            color: colorScheme.onPrimary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(width: 8),
-            ],
+                  ),
+              ],
+            ),
           ),
-          body: Column(
-            children: [
-              // Active Filters Indicator
-              if (state.currentFilter.hasActiveFilters)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                  color: colorScheme.primaryContainer.withValues(alpha: 0.3),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Iconsax.filter_tick_outline,
-                        size: 16,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _getActiveFiltersText(state.currentFilter),
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: colorScheme.primary,
-                                fontWeight: FontWeight.w500,
-                              ),
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                // Active Filters Indicator
+                if (state.currentFilter.hasActiveFilters)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    color: colorScheme.primaryContainer.withValues(alpha: 0.3),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Iconsax.filter_tick_outline,
+                          size: 16,
+                          color: colorScheme.primary,
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () => context.read<TransactionBloc>().add(
-                          const TransactionFilterCleared(),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _getActiveFiltersText(state.currentFilter),
+                            style: context.textTheme.bodySmall.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                        style: TextButton.styleFrom(
+                        CupertinoButton(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 4,
                           ),
                           minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          'Clear',
-                          style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 8,
+                            cornerSmoothing: 0.6,
+                          ),
+                          onPressed: () => context.read<TransactionBloc>().add(
+                            const TransactionFilterCleared(),
+                          ),
+                          child: Text(
+                            'Clear',
+                            style: TextStyle(
+                              color: colorScheme.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+
+                // Transaction List
+                Expanded(
+                  child: GroupedTransactionList(
+                    controller: _scrollController,
+                    onTap: _showTransactionDetails,
+                    onDelete: (transaction) async {
+                      context.read<TransactionBloc>().add(
+                        TransactionDeleted(transaction),
+                      );
+                    },
+                    onEdit: (transaction) async {
+                      await Navigator.of(context).push(
+                        CupertinoPageRoute<void>(
+                          builder: (context) => TransactionFormScreen(
+                            transaction: transaction,
+                            onSubmit: (updated) => context
+                                .read<TransactionBloc>()
+                                .add(TransactionUpdated(updated)),
+                          ),
+                        ),
+                      );
+                    },
+                    onCategoryTap: _showCategorySelectionSheet,
+                    groupedTransactions: groupedTransactions,
+                    isLoadingMore: state.isLoadingMore,
                   ),
                 ),
-
-              // Transaction List
-              Expanded(
-                child: GroupedTransactionList(
-                  controller: _scrollController,
-                  onTap: (transaction) {
-                    _showTransactionDetails(transaction, colorScheme);
-                  },
-                  onDelete: (transaction) async {
-                    context.read<TransactionBloc>().add(
-                      TransactionDeleted(transaction),
-                    );
-                  },
-                  onEdit: (transaction) async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) => TransactionFormScreen(
-                          transaction: transaction,
-                          onSubmit: (updated) => context
-                              .read<TransactionBloc>()
-                              .add(TransactionUpdated(updated)),
-                        ),
-                      ),
-                    );
-                  },
-                  onCategoryTap: _showCategorySelectionSheet,
-                  groupedTransactions: groupedTransactions,
-                  isLoadingMore: state.isLoadingMore,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  Future<void> _showTransactionDetails(
-    Transaction transaction,
-    ColorScheme colorScheme,
-  ) async {
-    await showModalBottomSheet<void>(
+  Future<void> _showTransactionDetails(Transaction transaction) async {
+    await showCupertinoModalPopup<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => TransactionDetailsScreen(transaction: transaction),
     );
   }
@@ -218,10 +222,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     BuildContext context,
     TransactionState state,
   ) async {
-    await showModalBottomSheet<void>(
+    await showCupertinoModalPopup<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (_) => TransactionFilterBottomSheet(
         initialFilter: state.currentFilter,
         onApplyFilter: (filter) {
@@ -236,9 +238,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
     if (filter.hasAmountFilter) {
       if (filter.minAmount != null && filter.maxAmount != null) {
-        activeFilters.add(
-          'Amount: ₹${filter.minAmount!.toStringAsFixed(0)} - ₹${filter.maxAmount!.toStringAsFixed(0)}',
-        );
+        final min = filter.minAmount!.toStringAsFixed(0);
+        final max = filter.maxAmount!.toStringAsFixed(0);
+        activeFilters.add('Amount: ₹$min - ₹$max');
       } else if (filter.minAmount != null) {
         activeFilters.add('Min: ₹${filter.minAmount!.toStringAsFixed(0)}');
       } else if (filter.maxAmount != null) {
@@ -281,10 +283,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         ? categoryProvider.expenseCategories
         : categoryProvider.incomeCategories;
 
-    await showModalBottomSheet<void>(
+    await showCupertinoModalPopup<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => CategorySelectionBottomSheet(
         categories: categories,
         currentCategoryId: transaction.categoryId,
@@ -300,11 +300,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           );
 
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Category changed to ${selectedCategory.name}'),
-                behavior: SnackBarBehavior.floating,
-              ),
+            showCupertinoToast(
+              this.context,
+              'Category changed to ${selectedCategory.name}',
             );
           }
         },

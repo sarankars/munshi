@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:munshi/core/theme.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// A simple shimmer placeholder widget using the shimmer package
 class ShimmerPlaceholder extends StatelessWidget {
+  /// Creates a [ShimmerPlaceholder].
   const ShimmerPlaceholder({
     super.key,
     this.width,
@@ -10,13 +13,18 @@ class ShimmerPlaceholder extends StatelessWidget {
     this.borderRadius = 12,
   });
 
+  /// Optional fixed width; if `null` the widget fills available space.
   final double? width;
+
+  /// Height of the placeholder. Defaults to 56.
   final double height;
+
+  /// Corner radius of the placeholder rectangle. Defaults to 12.
   final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Shimmer.fromColors(
       baseColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
@@ -26,33 +34,44 @@ class ShimmerPlaceholder extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(borderRadius),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: borderRadius,
+              cornerSmoothing: 0.6,
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-/// AI Processing Indicator - shows at the top of the form
-/// Note: This widget is conditionally rendered, so it only appears when processing
+/// AI Processing Indicator - shows at the top of the form.
+/// Note: This widget is conditionally rendered when processing.
 class AIProcessingIndicator extends StatelessWidget {
+  /// Creates an [AIProcessingIndicator].
   const AIProcessingIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.primary.withValues(alpha: 0.2),
-          width: 1.5,
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16,
+            cornerSmoothing: 0.6,
+          ),
+          side: BorderSide(
+            color: colorScheme.primary.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
         ),
       ),
       child: Row(
@@ -60,10 +79,7 @@ class AIProcessingIndicator extends StatelessWidget {
           SizedBox(
             height: 20,
             width: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation(colorScheme.primary),
-            ),
+            child: CupertinoActivityIndicator(color: colorScheme.primary),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -73,7 +89,7 @@ class AIProcessingIndicator extends StatelessWidget {
               children: [
                 Text(
                   'AI is analyzing your receipt',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  style: context.textTheme.titleSmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onPrimaryContainer,
                   ),
@@ -81,7 +97,7 @@ class AIProcessingIndicator extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Fields will auto-fill in a moment...',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: context.textTheme.bodySmall.copyWith(
                     color: colorScheme.onPrimaryContainer.withValues(
                       alpha: 0.8,
                     ),
