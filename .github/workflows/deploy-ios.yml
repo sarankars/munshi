@@ -3,9 +3,6 @@ name: Deploy iOS App to TestFlight
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "Version name (optional)"
-        required: false
       notes:
         description: "Release notes (optional)"
         required: false
@@ -55,9 +52,7 @@ jobs:
       - name: 🚀 Deploy iOS app to TestFlight
         working-directory: ios
         env:
-          RELEASE_VERSION: ${{ github.event.inputs.version }}
           RELEASE_NOTES: ${{ github.event.inputs.notes }}
         run: |
-          echo "Version: $RELEASE_VERSION"
           echo "Notes: $RELEASE_NOTES"
           bundle exec fastlane beta

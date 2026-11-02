@@ -57,6 +57,7 @@ platform :ios do
 
     # Upload IPA to TestFlight
     upload_to_testflight(
+      changelog: ENV['RELEASE_NOTES'],
       skip_waiting_for_build_processing: false,
       distribute_external: false
     )
